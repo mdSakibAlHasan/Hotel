@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Invoice</title>
+  <style>
+    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);} 
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
+    .wrap{max-width:900px;margin:32px auto 60px;padding:0 16px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
+    .card .body{padding:20px}
+    .head{display:flex;justify-content:space-between;align-items:start;gap:16px}
+    .brand{font-weight:800;letter-spacing:.6px;font-size:22px}
+    .muted{color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{text-align:left;padding:10px;border-bottom:1px dashed var(--border)}
+    th{color:var(--muted);font-weight:600;width:220px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
+    button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
+    button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+    button.success{background:#22c55e}
+    @media print{
+      body{background:#fff}
+      .actions{display:none!important}
+      .card{box-shadow:none;border:0}
+      .card .body{padding:0}
+    }
+    .error{max-width:900px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
+  </style>
+</head>
+<body>
+  <div id="error" class="error" style="display:none"></div>
+  <div class="wrap">
+    <section class="card">
+      <div class="body">
+        <div class="head">
+          <div>
+            <div class="brand">Aurora Hotel</div>
+            <div class="muted">Dhaka · info@aurorahotel.bd</div>
+          </div>
+          <div class="muted">Issue Date: <span id="invDate"></span></div>
+        </div>
+
+        <table>
+          <tbody>
+            <tr><th>Guest Name</th><td id="vName"></td></tr>
+            <tr><th>Address</th><td id="vAddress"></td></tr>
+            <tr><th>Check-in</th><td id="vIn"></td></tr>
+            <tr><th>Check-out</th><td id="vOut"></td></tr>
+            <tr><th>Nights</th><td id="vNights"></td></tr>
+            <tr><th>Rate per Night</th><td>1500 Tk</td></tr>
+            <tr><th>Total Cost</th><td id="vTotal"></td></tr>
+          </tbody>
+        </table>
+
+        <div class="actions">
+          <button id="btnPrint" class="success" type="button">Print / Save PDF</button>
+          <a href="index.html" class="secondary" style="text-decoration:none;display:inline-block;padding:12px 16px;border-radius:12px;border:1px solid var(--border)">Edit Details</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const toLocal = d => new Date(d).toLocaleDateString(undefined, {year:'numeric',month:'short',day:'2-digit'});
+    const nightsBetween = (a,b)=>Math.max(0, Math.round((new Date(b)-new Date(a))/(24*60*60*1000)));
+
+    function loadFromQuery(){
+      const p = new URLSearchParams(location.search);
+      const name = (p.get('name')||'').trim();
+      const address = (p.get('address')||'').trim();
+      const ci = p.get('checkin')||'';
+      const co = p.get('checkout')||'';
+      if(!name || !address || !ci || !co){
+        $('#error').style.display = 'block';
+        $('#error').textContent = 'Missing details. Please go back and fill the form.';
+        return false;
+      }
+      const n = nightsBetween(ci, co);
+      if(n <= 0){
+        $('#error').style.display = 'block';
+        $('#error').textContent = 'Check-out must be after Check-in. Please go back and fix the dates.';
+        return false;
+      }
+      const rate = 1500;
+      const total = n * rate;
+      $('#vName').textContent = name;
+      $('#vAddress').innerHTML = address.replace(/\n/g,'<br>');
+      $('#vIn').textContent = toLocal(ci);
+      $('#vOut').textContent = toLocal(co);
+      $('#vNights').textContent = `${n} night${n>1?'s':''}`;
+      $('#vTotal').textContent = `${total} Tk`;
+      $('#invDate').textContent = toLocal(new Date());
+      return true;
+    }
+
+    $('#btnPrint').addEventListener('click', ()=>window.print());
+    loadFromQuery();
+  </script>
+</body>
+</html>
