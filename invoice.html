@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Invoice</title>
   <style>
-    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);} 
+    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
     .wrap{max-width:900px;margin:32px auto 60px;padding:0 16px}
@@ -28,6 +28,8 @@
       .card .body{padding:0}
     }
     .error{max-width:900px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
+    .right{ text-align:right }
+    tfoot td{ border-bottom:0 }
   </style>
 </head>
 <body>
@@ -37,27 +39,32 @@
       <div class="body">
         <div class="head">
           <div>
-            <div class="brand">Aurora Hotel</div>
-            <div class="muted">Dhaka · info@aurorahotel.bd</div>
+            <div class="brand" id="hotelBrand">Hotel</div>
+            <div class="muted" id="hotelAddr">Address</div>
           </div>
           <div class="muted">Issue Date: <span id="invDate"></span></div>
         </div>
 
         <table>
           <tbody>
-            <tr><th>Guest Name</th><td id="vName"></td></tr>
-            <tr><th>Address</th><td id="vAddress"></td></tr>
+            <tr><th>Guest Name</th><td id="vGuestName"></td></tr>
+            <tr><th>Guest Address</th><td id="vGuestAddress"></td></tr>
+            <tr><th>Room Type</th><td id="vRoomType"></td></tr>
+            <tr><th>Meals</th><td id="vMeals"></td></tr>
             <tr><th>Check-in</th><td id="vIn"></td></tr>
             <tr><th>Check-out</th><td id="vOut"></td></tr>
             <tr><th>Nights</th><td id="vNights"></td></tr>
-            <tr><th>Rate per Night</th><td>1500 Tk</td></tr>
-            <tr><th>Total Cost</th><td id="vTotal"></td></tr>
           </tbody>
+          <tfoot>
+            <tr><th>Rate per Night</th><td id="vRate" class="right"></td></tr>
+            <tr style="font-weight:800"><th>Total Cost</th><td id="vTotal" class="right"></td></tr>
+          </tfoot>
         </table>
 
         <div class="actions">
           <button id="btnPrint" class="success" type="button">Print / Save PDF</button>
-          <a href="index.html" class="secondary" style="text-decoration:none;display:inline-block;padding:12px 16px;border-radius:12px;border:1px solid var(--border)">Edit Details</a>
+          <!-- Edit: send user back to index with same params to update -->
+          <a id="editLink" href="index.html" class="secondary" style="text-decoration:none;display:inline-block;padding:12px 16px;border-radius:12px;border:1px solid var(--border)">Edit Details</a>
         </div>
       </div>
     </section>
@@ -70,31 +77,50 @@
 
     function loadFromQuery(){
       const p = new URLSearchParams(location.search);
-      const name = (p.get('name')||'').trim();
-      const address = (p.get('address')||'').trim();
-      const ci = p.get('checkin')||'';
-      const co = p.get('checkout')||'';
-      if(!name || !address || !ci || !co){
-        $('#error').style.display = 'block';
-        $('#error').textContent = 'Missing details. Please go back and fill the form.';
-        return false;
+      const get = k => (p.get(k)||'').trim();
+
+      const hotelName = get('hotelName');
+      const hotelAddress = get('hotelAddress');
+      const guestName = get('guestName');
+      const guestAddress = get('guestAddress');
+      const roomType = get('roomType');
+      const meals = get('meals') || 'None';
+      const ci = get('checkin');
+      const co = get('checkout');
+      const rateStr = get('rate');
+      const rate = Number(rateStr);
+
+      // Basic validation
+      if(!hotelName || !hotelAddress || !guestName || !guestAddress || !ci || !co || !roomType || !rateStr){
+        showErr('Missing details. Please go back and fill the form.');
+        return;
       }
       const n = nightsBetween(ci, co);
-      if(n <= 0){
-        $('#error').style.display = 'block';
-        $('#error').textContent = 'Check-out must be after Check-in. Please go back and fix the dates.';
-        return false;
-      }
-      const rate = 1500;
-      const total = n * rate;
-      $('#vName').textContent = name;
-      $('#vAddress').innerHTML = address.replace(/\n/g,'<br>');
+      if(n <= 0){ showErr('Check-out must be after Check-in.'); return; }
+      if(!isFinite(rate) || rate < 0){ showErr('Rate must be a number ≥ 0.'); return; }
+
+      // Fill
+      $('#hotelBrand').textContent = hotelName;
+      $('#hotelAddr').textContent = hotelAddress;
+      $('#vGuestName').textContent = guestName;
+      $('#vGuestAddress').innerHTML = guestAddress.replace(/\\n/g,'<br>');
+      $('#vRoomType').textContent = roomType;
+      $('#vMeals').textContent = meals;
       $('#vIn').textContent = toLocal(ci);
       $('#vOut').textContent = toLocal(co);
       $('#vNights').textContent = `${n} night${n>1?'s':''}`;
-      $('#vTotal').textContent = `${total} Tk`;
+      $('#vRate').textContent = `${rate.toLocaleString()} Tk`;
+      $('#vTotal').textContent = `${(n * rate).toLocaleString()} Tk`;
       $('#invDate').textContent = toLocal(new Date());
-      return true;
+
+      // Edit link preserves params so the form can prefill and user can update
+      $('#editLink').href = `index.html?${p.toString()}`;
+    }
+
+    function showErr(msg){
+      const e = $('#error');
+      e.style.display = 'block';
+      e.textContent = msg;
     }
 
     $('#btnPrint').addEventListener('click', ()=>window.print());
