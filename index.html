@@ -8,35 +8,33 @@
     :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);} 
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
-    header{max-width:900px;margin:32px auto 8px;padding:0 16px}
+    header{max-width:780px;margin:32px auto 8px;padding:0 16px}
     header h1{margin:0 0 6px}
     header p{margin:0;color:var(--muted)}
-    .container{max-width:900px;margin:16px auto 60px;padding:0 16px;display:grid;gap:16px}
+    .container{max-width:780px;margin:16px auto 60px;padding:0 16px;display:grid;gap:16px}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
     .card .body{padding:20px}
     .card h2{margin:0 0 12px;font-size:20px}
     .row{display:grid;gap:12px}
     @media (min-width:640px){.row.two{grid-template-columns:1fr 1fr}}
-    @media (min-width:900px){.row.three{grid-template-columns:1fr 1fr 1fr}}
     label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
     input,textarea,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:#0f1627;color:var(--text);outline:none}
     textarea{resize:vertical}
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
     button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
-    button:disabled{opacity:.6;cursor:not-allowed}
   </style>
 </head>
 <body>
   <header>
-    <h1>Guest Booking</h1>
-    <p class="muted">Fill the form. On submit you will be redirected to a separate invoice page where you can print or edit.</p>
+    <h1>Guest Booking Form</h1>
+    <p class="muted">Enter details and you'll be redirected to an invoice page that shows everything including total cost.</p>
   </header>
 
   <div class="container">
     <section class="card form">
       <div class="body">
-        <h2>Hotel Details</h2>
+        <h2>Booking Details</h2>
         <div class="row">
           <div>
             <label for="hotelName">Hotel Name *</label>
@@ -44,11 +42,9 @@
           </div>
           <div>
             <label for="hotelAddress">Hotel Address *</label>
-            <textarea id="hotelAddress" rows="3" placeholder="House #12, Road 7, Dhanmondi, Dhaka 1205" required></textarea>
+            <textarea id="hotelAddress" rows="2" placeholder="Dhaka, Bangladesh" required></textarea>
           </div>
         </div>
-
-        <h2 style="margin-top:14px">Guest & Stay</h2>
         <div class="row">
           <div>
             <label for="guestName">Guest Name *</label>
@@ -56,10 +52,10 @@
           </div>
           <div>
             <label for="guestAddress">Guest Address *</label>
-            <textarea id="guestAddress" rows="3" placeholder="Street, City, Postal Code" required></textarea>
+            <textarea id="guestAddress" rows="2" placeholder="Street, City, Postal Code" required></textarea>
           </div>
         </div>
-        <div class="row three">
+        <div class="row two">
           <div>
             <label for="checkIn">Check-in *</label>
             <input id="checkIn" type="date" required>
@@ -68,32 +64,41 @@
             <label for="checkOut">Check-out *</label>
             <input id="checkOut" type="date" required>
           </div>
-          <div>
-            <label for="rate">Rate per Night (Tk) *</label>
-            <input id="rate" type="number" min="0" step="1" placeholder="1500" required>
-          </div>
         </div>
         <div class="row two">
           <div>
             <label for="roomType">Room Type *</label>
             <select id="roomType" required>
+              <option value="">Select</option>
               <option value="Single Bed">Single Bed</option>
               <option value="Double Bed">Double Bed</option>
-              <option value="Twin">Twin</option>
               <option value="Suite">Suite</option>
+              <option value="Triple">Triple</option>
+              <option value="Quad">Quad</option>
+              <option value="Quint">Quint</option>
+              <option value="Hexa">Hexa</option>
             </select>
           </div>
           <div>
-            <label for="meals">Meals</label>
+            <label for="meals">Meals Included</label>
             <select id="meals">
-              <option value="None">None</option>
+              <option value="No">No</option>
               <option value="Breakfast">Breakfast</option>
-              <option value="Half Board (Breakfast + Dinner)">Half Board (Breakfast + Dinner)</option>
-              <option value="Full Board (Breakfast + Lunch + Dinner)">Full Board (Breakfast + Lunch + Dinner)</option>
+              <option value="Half Board">Half Board</option>
+              <option value="Full Board">Full Board</option>
             </select>
           </div>
         </div>
-
+        <div class="row two">
+          <div>
+            <label for="rate">Rate per Night (Tk) *</label>
+            <input id="rate" type="number" min="0" value="1500" required>
+          </div>
+          <div>
+            <label for="rooms">Number of Rooms *</label>
+            <input id="rooms" type="number" min="1" value="1" required>
+          </div>
+        </div>
         <div class="actions">
           <button id="btnSubmit" type="button">Create Invoice</button>
           <button id="btnReset" class="secondary" type="button">Reset</button>
@@ -105,51 +110,37 @@
   <script>
     const $ = s => document.querySelector(s);
 
-    function fillFromQuery(){
-      const p = new URLSearchParams(location.search);
-      const set = (id, val)=>{ if(val!==null && val!==undefined && val!==''){ const el = $(id); if(el){ el.value = val; } } };
-      set('#hotelName', p.get('hotelName'));
-      set('#hotelAddress', p.get('hotelAddress'));
-      set('#guestName', p.get('guestName'));
-      set('#guestAddress', p.get('guestAddress'));
-      set('#checkIn', p.get('checkin'));
-      set('#checkOut', p.get('checkout'));
-      set('#roomType', p.get('roomType'));
-      set('#meals', p.get('meals'));
-      set('#rate', p.get('rate'));
-    }
-
     function submitAndRedirect(){
-      const required = ['#hotelName','#hotelAddress','#guestName','#guestAddress','#checkIn','#checkOut','#rate','#roomType'];
-      for(const sel of required){ if(!$(sel).value.trim()){ alert('Please fill all required fields.'); return; } }
-
+      const hotelName = $('#hotelName').value.trim();
+      const hotelAddress = $('#hotelAddress').value.trim();
+      const guestName = $('#guestName').value.trim();
+      const guestAddress = $('#guestAddress').value.trim();
+      const ci = $('#checkIn').value;
+      const co = $('#checkOut').value;
+      const roomType = $('#roomType').value;
+      const meals = $('#meals').value;
+      const rate = $('#rate').value;
+      const rooms = $('#rooms').value;
+      if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!roomType||!rate||!rooms){
+        alert('Please fill all required fields.');
+        return;
+      }
       const params = new URLSearchParams({
-        hotelName: $('#hotelName').value.trim(),
-        hotelAddress: $('#hotelAddress').value.trim(),
-        guestName: $('#guestName').value.trim(),
-        guestAddress: $('#guestAddress').value.trim(),
-        checkin: $('#checkIn').value,
-        checkout: $('#checkOut').value,
-        roomType: $('#roomType').value,
-        meals: $('#meals').value,
-        rate: $('#rate').value.trim()
+        hotelName,hotelAddress,guestName,guestAddress,checkin:ci,checkout:co,roomType,meals,rate,rooms
       });
       window.location.href = `invoice.html?${params.toString()}`;
     }
 
     $('#btnSubmit').addEventListener('click', submitAndRedirect);
     $('#btnReset').addEventListener('click', ()=>{
-      document.querySelectorAll('input, textarea, select').forEach(e=>{ if(e.tagName==='SELECT') e.selectedIndex=0; else e.value=''; });
+      document.querySelectorAll('input, textarea, select').forEach(e=>e.value='');
     });
 
-    // Defaults
     (function(){
       const today = new Date();
       const tomorrow = new Date(Date.now() + 24*60*60*1000);
       $('#checkIn').valueAsDate = today;
       $('#checkOut').valueAsDate = tomorrow;
-      $('#rate').value = '1500';
-      fillFromQuery(); // if coming back from invoice to edit, prefill
     })();
   </script>
 </body>
