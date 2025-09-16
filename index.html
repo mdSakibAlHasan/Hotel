@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Guest Booking → Generate Invoice</title>
   <style>
-    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);} 
+    /* Styling for the form */
+    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
     header{max-width:780px;margin:32px auto 8px;padding:0 16px}
@@ -17,24 +18,30 @@
     .card h2{margin:0 0 12px;font-size:20px}
     .row{display:grid;gap:12px}
     @media (min-width:640px){.row.two{grid-template-columns:1fr 1fr}}
+    @media (min-width:900px){.row.three{grid-template-columns:1fr 1fr 1fr}}
     label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
     input,textarea,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:#0f1627;color:var(--text);outline:none}
     textarea{resize:vertical}
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
     button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .room-row{display:grid;gap:10px;align-items:end;margin-bottom:10px;grid-template-columns: 1fr 1fr 1fr 1fr auto}
+    .room-row .remove{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
+    .room-toolbar{display:flex;gap:10px;margin:8px 0 2px}
+    @media (max-width:700px){ .room-row{grid-template-columns:1fr 1fr; } }
   </style>
 </head>
 <body>
   <header>
     <h1>Guest Booking Form</h1>
-    <p class="muted">Enter details and you'll be redirected to an invoice page that shows everything including total cost.</p>
+    <p class="muted">Enter details, add as many rooms as you need, and you'll be redirected to an invoice page with totals.</p>
   </header>
 
   <div class="container">
     <section class="card form">
       <div class="body">
-        <h2>Booking Details</h2>
+        <h2>Hotel & Guest</h2>
         <div class="row">
           <div>
             <label for="hotelName">Hotel Name *</label>
@@ -55,6 +62,60 @@
             <textarea id="guestAddress" rows="2" placeholder="Street, City, Postal Code" required></textarea>
           </div>
         </div>
+
+        <h2>Rooms</h2>
+        <div id="roomsContainer">
+          <!-- Default room (one line) -->
+          <div class="room-row">
+            <div>
+              <label>Room No *</label>
+              <input class="roomNo" type="text" required>
+            </div>
+            <div>
+              <label>Room View *</label>
+              <select class="roomView" required>
+                <option value="Non view">Non view</option>
+                <option value="City view">City view</option>
+                <option value="Haram view">Haram view</option>
+              </select>
+            </div>
+            <div>
+              <label>Room Type *</label>
+              <select class="roomType" required>
+                <option value="Single Bed">Single Bed</option>
+                <option value="Double Bed">Double Bed</option>
+                <option value="Suite">Suite</option>
+                <option value="Triple">Triple</option>
+                <option value="Quad">Quad</option>
+                <option value="Quint">Quint</option>
+                <option value="Hexa">Hexa</option>
+              </select>
+            </div>
+            <div>
+              <label>Rate (Tk) *</label>
+              <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
+            </div>
+            <button type="button" class="remove" aria-label="Remove room">Remove</button>
+          </div>
+        </div>
+        <div class="room-toolbar">
+          <button id="addRoomBtn" type="button">Add Room</button>
+        </div>
+
+        <h2>Meal Type</h2>
+        <div class="row two">
+          <div>
+            <label for="meals">Meal Type</label>
+            <select id="meals" required>
+              <option value="None">None</option>
+              <option value="Breakfast">Breakfast</option>
+              <option value="Half Board (Breakfast + Dinner)">Half Board (Breakfast + Dinner)</option>
+              <option value="Full Board (Breakfast + Lunch + Dinner)">Full Board (Breakfast + Lunch + Dinner)</option>
+            </select>
+          </div>
+        </div>
+
+        <h2>Dates</h2>
         <div class="row two">
           <div>
             <label for="checkIn">Check-in *</label>
@@ -65,40 +126,7 @@
             <input id="checkOut" type="date" required>
           </div>
         </div>
-        <div class="row two">
-          <div>
-            <label for="roomType">Room Type *</label>
-            <select id="roomType" required>
-              <option value="">Select</option>
-              <option value="Single Bed">Single Bed</option>
-              <option value="Double Bed">Double Bed</option>
-              <option value="Suite">Suite</option>
-              <option value="Triple">Triple</option>
-              <option value="Quad">Quad</option>
-              <option value="Quint">Quint</option>
-              <option value="Hexa">Hexa</option>
-            </select>
-          </div>
-          <div>
-            <label for="meals">Meals Included</label>
-            <select id="meals">
-              <option value="No">No</option>
-              <option value="Breakfast">Breakfast</option>
-              <option value="Half Board">Half Board</option>
-              <option value="Full Board">Full Board</option>
-            </select>
-          </div>
-        </div>
-        <div class="row two">
-          <div>
-            <label for="rate">Rate per Night (Tk) *</label>
-            <input id="rate" type="number" min="0" value="1500" required>
-          </div>
-          <div>
-            <label for="rooms">Number of Rooms *</label>
-            <input id="rooms" type="number" min="1" value="1" required>
-          </div>
-        </div>
+
         <div class="actions">
           <button id="btnSubmit" type="button">Create Invoice</button>
           <button id="btnReset" class="secondary" type="button">Reset</button>
@@ -109,39 +137,121 @@
 
   <script>
     const $ = s => document.querySelector(s);
+    const roomsContainer = $('#roomsContainer');
 
+    // Remove room functionality
+    function bindRemove(btn){
+      btn.addEventListener('click', () => {
+        const rows = roomsContainer.querySelectorAll('.room-row');
+        if (rows.length <= 1) { alert('At least one room is required.'); return; }
+        btn.closest('.room-row').remove();
+      });
+    }
+
+    // Bind initial remove button
+    bindRemove(roomsContainer.querySelector('.room-row .remove'));
+
+    // Function to create a new room row
+    function makeRoomRow(init={}){
+      const row = document.createElement('div');
+      row.className = 'room-row';
+      row.innerHTML = `
+        <div>
+          <label>Room No *</label>
+          <input class="roomNo" type="text" required>
+        </div>
+        <div>
+          <label>Room View *</label>
+          <select class="roomView" required>
+            <option value="Non view">Non view</option>
+            <option value="City view">City view</option>
+            <option value="Haram view">Haram view</option>
+          </select>
+        </div>
+        <div>
+          <label>Room Type *</label>
+          <select class="roomType" required>
+            <option value="Single Bed">Single Bed</option>
+            <option value="Double Bed">Double Bed</option>
+            <option value="Suite">Suite</option>
+            <option value="Triple">Triple</option>
+            <option value="Quad">Quad</option>
+            <option value="Quint">Quint</option>
+            <option value="Hexa">Hexa</option>
+          </select>
+        </div>
+        <div>
+          <label>Rate (Tk) *</label>
+          <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
+        </div>
+        <button type="button" class="remove" aria-label="Remove room">Remove</button>
+      `;
+      // Prefill if provided
+      if (init.roomNo) row.querySelector('.roomNo').value = init.roomNo;
+      if (init.roomView) row.querySelector('.roomView').value = init.roomView;
+      if (init.roomType) row.querySelector('.roomType').value = init.roomType;
+      if (init.rate != null) row.querySelector('.rate').value = init.rate;
+      bindRemove(row.querySelector('.remove'));
+      return row;
+    }
+
+    // Add room handler
+    $('#addRoomBtn').addEventListener('click', () => {
+      roomsContainer.appendChild(makeRoomRow());
+    });
+
+    // Submit and redirect to invoice page
     function submitAndRedirect(){
       const hotelName = $('#hotelName').value.trim();
       const hotelAddress = $('#hotelAddress').value.trim();
       const guestName = $('#guestName').value.trim();
       const guestAddress = $('#guestAddress').value.trim();
-      const ci = $('#checkIn').value;
-      const co = $('#checkOut').value;
-      const roomType = $('#roomType').value;
-      const meals = $('#meals').value;
-      const rate = $('#rate').value;
-      const rooms = $('#rooms').value;
-      if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!roomType||!rate||!rooms){
-        alert('Please fill all required fields.');
+      const checkin = $('#checkIn').value;
+      const checkout = $('#checkOut').value;
+      const meals = $('#meals').value.trim(); // Get meal type value
+
+      const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => ({
+        roomNo: row.querySelector('.roomNo').value.trim(),
+        roomView: row.querySelector('.roomView').value,
+        roomType: row.querySelector('.roomType').value,
+        rate: row.querySelector('.rate').value.trim()
+      }));
+
+      // Basic validation for hotel, guest, and date fields
+      if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout || !meals){
+        alert('Please fill all required Hotel, Guest, Meal Type, and Date fields.');
         return;
       }
+
+      // Validate each room field
+      for (const room of rooms) {
+        if (!room.roomNo || !room.roomView || !room.roomType || !room.rate) {
+          alert('Please fill all room fields (Room No, View, Type, Rate).');
+          return;
+        }
+      }
+
       const params = new URLSearchParams({
-        hotelName,hotelAddress,guestName,guestAddress,checkin:ci,checkout:co,roomType,meals,rate,rooms
+        hotelName, hotelAddress, guestName, guestAddress, checkin, checkout, meals,
+        rooms: JSON.stringify(rooms)
       });
+
       window.location.href = `invoice.html?${params.toString()}`;
     }
 
+    // Event listener for Submit button
     $('#btnSubmit').addEventListener('click', submitAndRedirect);
-    $('#btnReset').addEventListener('click', ()=>{
-      document.querySelectorAll('input, textarea, select').forEach(e=>e.value='');
-    });
 
-    (function(){
-      const today = new Date();
-      const tomorrow = new Date(Date.now() + 24*60*60*1000);
-      $('#checkIn').valueAsDate = today;
-      $('#checkOut').valueAsDate = tomorrow;
-    })();
+    // Event listener for Reset button
+    $('#btnReset').addEventListener('click', ()=>{ 
+      document.querySelectorAll('input, textarea, select').forEach(e=>{ 
+        if(e.tagName==='SELECT') e.selectedIndex=0; 
+        else e.value=''; 
+      });
+      // keep one room row
+      roomsContainer.innerHTML = '';
+      roomsContainer.appendChild(makeRoomRow());
+    });
   </script>
 </body>
 </html>

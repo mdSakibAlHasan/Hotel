@@ -8,7 +8,7 @@
     :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
-    .wrap{max-width:900px;margin:32px auto 60px;padding:0 16px}
+    .wrap{max-width:1000px;margin:32px auto 60px;padding:0 16px}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
     .card .body{padding:20px}
     .head{display:flex;justify-content:space-between;align-items:start;gap:16px}
@@ -28,7 +28,7 @@
       .card{box-shadow:none;border:0}
       .card .body{padding:0}
     }
-    .error{max-width:900px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
+    .error{max-width:1000px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
     tfoot td{border-bottom:0}
   </style>
 </head>
@@ -49,17 +49,33 @@
           <tbody>
             <tr><th>Guest Name</th><td id="vGuestName"></td></tr>
             <tr><th>Guest Address</th><td id="vGuestAddress"></td></tr>
-            <tr><th>Room Type</th><td id="vRoomType"></td></tr>
-            <tr><th>Meals</th><td id="vMeals"></td></tr>
+            <tr><th>Meal Type</th><td id="vMeals"></td></tr>
             <tr><th>Check-in</th><td id="vIn"></td></tr>
             <tr><th>Check-out</th><td id="vOut"></td></tr>
             <tr><th>Nights</th><td id="vNights"></td></tr>
-            <tr><th>Rooms</th><td id="vRooms"></td></tr>
           </tbody>
+        </table>
+
+        <h3>Rooms</h3>
+        <table id="roomsTable">
+          <thead>
+            <tr>
+              <th>Room No</th>
+              <th>View</th>
+              <th>Type</th>
+              <th class="right">Rate (Tk)</th>
+            </tr>
+          </thead>
+          <tbody id="roomsBody"></tbody>
           <tfoot>
-            <tr><th>Rate per Night</th><td id="vRate" class="right"></td></tr>
-            <tr><th>Subtotal (Nights × Rate)</th><td id="vSubtotal" class="right"></td></tr>
-            <tr style="font-weight:800"><th>Total (× Rooms)</th><td id="vTotal" class="right"></td></tr>
+            <tr>
+              <th colspan="3" class="right">Per-night Subtotal</th>
+              <td id="perNightSubtotal" class="right"></td>
+            </tr>
+            <tr style="font-weight:800">
+              <th colspan="3" class="right">Total (Nights × Subtotal)</th>
+              <td id="grandTotal" class="right"></td>
+            </tr>
           </tfoot>
         </table>
 
@@ -79,48 +95,53 @@
     function loadFromQuery(){
       const p = new URLSearchParams(location.search);
       const get = k => (p.get(k)||'').trim();
-
       const hotelName = get('hotelName');
       const hotelAddress = get('hotelAddress');
       const guestName = get('guestName');
       const guestAddress = get('guestAddress');
-      const roomType = get('roomType');
-      const meals = get('meals') || 'No';
+      const meals = get('meals');
       const ci = get('checkin');
       const co = get('checkout');
-      const rate = Number(get('rate'));
-      const rooms = Number(get('rooms') || '1');
+      let rooms = [];
+      try { rooms = JSON.parse(p.get('rooms') || '[]'); } catch(e){ rooms = []; }
 
-      if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!roomType||!get('rate')||!get('rooms')){
+      if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!rooms.length){
         return showErr('Missing details. Please go back and fill the form.');
       }
       const n = nightsBetween(ci, co);
       if(n <= 0) return showErr('Check-out must be after Check-in.');
-      if(!isFinite(rate) || rate < 0) return showErr('Rate must be a number ≥ 0.');
-      if(!Number.isInteger(rooms) || rooms < 1) return showErr('Rooms must be an integer ≥ 1.');
 
-      const subtotal = n * rate;
-      const total = subtotal * rooms;
-
-      // Fill
+      // Header
       $('#hotelBrand').textContent = hotelName;
       $('#hotelAddr').textContent = hotelAddress;
-
       $('#vGuestName').textContent = guestName;
-      $('#vGuestAddress').innerHTML = guestAddress.replace(/\n/g,'<br>');
-      $('#vRoomType').textContent = roomType;
-      $('#vMeals').textContent = meals;
+      $('#vGuestAddress').innerHTML = guestAddress.replace(/\\n/g,'<br>');
+      $('#vMeals').textContent = meals || 'No meals selected';
       $('#vIn').textContent = toLocal(ci);
       $('#vOut').textContent = toLocal(co);
       $('#vNights').textContent = `${n} night${n>1?'s':''}`;
-      $('#vRooms').textContent = rooms.toString();
-
-      $('#vRate').textContent = `${rate.toLocaleString()} Tk`;
-      $('#vSubtotal').textContent = `${subtotal.toLocaleString()} Tk`;
-      $('#vTotal').textContent = `${total.toLocaleString()} Tk`;
       $('#invDate').textContent = toLocal(new Date());
 
-      // preserve params for editing
+      // Rooms
+      const body = $('#roomsBody');
+      body.innerHTML = '';
+      let perNight = 0;
+      for(const r of rooms){
+        const rateNum = Number(r.rate || 0);
+        perNight += isFinite(rateNum) ? rateNum : 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.roomNo || ''}</td>
+          <td>${r.roomView || ''}</td>
+          <td>${r.roomType || ''}</td>
+          <td class="right">${(isFinite(rateNum)?rateNum:0).toLocaleString()} Tk</td>
+        `;
+        body.appendChild(tr);
+      }
+      $('#perNightSubtotal').textContent = `${perNight.toLocaleString()} Tk`;
+      $('#grandTotal').textContent = `${(perNight * n).toLocaleString()} Tk`;
+
+      // Edit link preserves data
       $('#editLink').href = `index.html?${p.toString()}`;
     }
 
