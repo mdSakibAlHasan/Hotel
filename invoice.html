@@ -8,7 +8,26 @@
     :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
-    .wrap{max-width:1000px;margin:32px auto 60px;padding:0 16px}
+
+    /* Brand Banner */
+    .brandbar{
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(90deg,#0ea5e9 0%,#4f46e5 50%,#9333ea 100%);
+      color:#fff; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+    .brandwrap{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+    .brandlogo{
+      width:38px;height:38px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.12); font-weight:800; letter-spacing:.5px;
+    }
+    .brandtxt{line-height:1.05}
+    .brandtxt .name{font-weight:1000}
+    .brandtxt .sub{font-size:12px;opacity:.9}
+
+    .wrap{max-width:1000px;margin:24px auto 60px;padding:0 16px}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
     .card .body{padding:20px}
     .head{display:flex;justify-content:space-between;align-items:start;gap:16px}
@@ -16,7 +35,7 @@
     .muted{color:var(--muted)}
     table{width:100%;border-collapse:collapse;margin-top:14px}
     th,td{text-align:left;padding:10px;border-bottom:1px dashed var(--border)}
-    th{color:var(--muted);font-weight:600;width:220px}
+    th{color:var(--muted);font-weight:600}
     .right{text-align:right}
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
     button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
@@ -27,12 +46,25 @@
       .actions{display:none!important}
       .card{box-shadow:none;border:0}
       .card .body{padding:0}
+      .brandbar{background:#fff;color:#000;border-bottom:1px solid #ddd;box-shadow:none}
+      .brandlogo{border-color:#bbb;background:#f2f2f2;color:#000}
     }
     .error{max-width:1000px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
     tfoot td{border-bottom:0}
   </style>
 </head>
 <body>
+  <!-- Brand Banner -->
+  <div class="brandbar" role="banner" aria-label='Company banner: "Top-10", Sylhet - Bangladesh'>
+    <div class="brandwrap">
+      <div class="brandlogo">T10</div>
+      <div class="brandtxt">
+        <div class="name">Top-10</div>
+        <div class="sub">Sylhet - Bangladesh</div>
+      </div>
+    </div>
+  </div>
+
   <div id="error" class="error" style="display:none"></div>
   <div class="wrap">
     <section class="card">
@@ -47,7 +79,7 @@
 
         <table>
           <tbody>
-            <tr><th>Guest Name</th><td id="vGuestName"></td></tr>
+            <tr><th style="width:220px">Guest Name</th><td id="vGuestName"></td></tr>
             <tr><th>Guest Address</th><td id="vGuestAddress"></td></tr>
             <tr><th>Meal Type</th><td id="vMeals"></td></tr>
             <tr><th>Check-in</th><td id="vIn"></td></tr>
@@ -56,24 +88,25 @@
           </tbody>
         </table>
 
-        <h3>Rooms</h3>
+        <h3 style="margin:18px 0 6px">Rooms</h3>
         <table id="roomsTable">
           <thead>
             <tr>
-              <th>Room No</th>
+              <th>Number of room(s)</th>
               <th>View</th>
               <th>Type</th>
               <th class="right">Rate (Tk)</th>
+              <th class="right">Line / Night (Tk)</th>
             </tr>
           </thead>
           <tbody id="roomsBody"></tbody>
           <tfoot>
             <tr>
-              <th colspan="3" class="right">Per-night Subtotal</th>
+              <th colspan="4" class="right">Per-night Subtotal</th>
               <td id="perNightSubtotal" class="right"></td>
             </tr>
             <tr style="font-weight:800">
-              <th colspan="3" class="right">Total (Nights × Subtotal)</th>
+              <th colspan="4" class="right">Total (Nights × Subtotal)</th>
               <td id="grandTotal" class="right"></td>
             </tr>
           </tfoot>
@@ -90,7 +123,6 @@
   <script>
     const $ = s => document.querySelector(s);
     const toLocal = d => new Date(d).toLocaleDateString(undefined, {year:'numeric',month:'short',day:'2-digit'});
-    const nightsBetween = (a,b)=>Math.max(0, Math.round((new Date(b)-new Date(a))/(24*60*60*1000)));
 
     function loadFromQuery(){
       const p = new URLSearchParams(location.search);
@@ -108,40 +140,44 @@
       if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!rooms.length){
         return showErr('Missing details. Please go back and fill the form.');
       }
-      const n = nightsBetween(ci, co);
+      const n = Math.max(0, Math.round((new Date(co)-new Date(ci))/(24*60*60*1000)));
       if(n <= 0) return showErr('Check-out must be after Check-in.');
 
       // Header
       $('#hotelBrand').textContent = hotelName;
       $('#hotelAddr').textContent = hotelAddress;
       $('#vGuestName').textContent = guestName;
-      $('#vGuestAddress').innerHTML = guestAddress.replace(/\\n/g,'<br>');
-      $('#vMeals').textContent = meals || 'No meals selected';
+      $('#vGuestAddress').innerHTML = guestAddress.replace(/\n/g,'<br>');
+      $('#vMeals').textContent = meals || 'None';
       $('#vIn').textContent = toLocal(ci);
       $('#vOut').textContent = toLocal(co);
       $('#vNights').textContent = `${n} night${n>1?'s':''}`;
       $('#invDate').textContent = toLocal(new Date());
 
-      // Rooms
+      // Rooms + totals
       const body = $('#roomsBody');
       body.innerHTML = '';
       let perNight = 0;
       for(const r of rooms){
-        const rateNum = Number(r.rate || 0);
-        perNight += isFinite(rateNum) ? rateNum : 0;
+        const qty  = Number(r.qty || 0);
+        const rate = Number(r.rate || 0);
+        const line = (Number.isFinite(qty)?qty:0) * (Number.isFinite(rate)?rate:0);
+        perNight += line;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${r.roomNo || ''}</td>
+          <td>${qty}</td>
           <td>${r.roomView || ''}</td>
           <td>${r.roomType || ''}</td>
-          <td class="right">${(isFinite(rateNum)?rateNum:0).toLocaleString()} Tk</td>
+          <td class="right">${(Number.isFinite(rate)?rate:0).toLocaleString()} Tk</td>
+          <td class="right">${line.toLocaleString()} Tk</td>
         `;
         body.appendChild(tr);
       }
       $('#perNightSubtotal').textContent = `${perNight.toLocaleString()} Tk`;
       $('#grandTotal').textContent = `${(perNight * n).toLocaleString()} Tk`;
 
-      // Edit link preserves data
+      // Preserve params for editing
       $('#editLink').href = `index.html?${p.toString()}`;
     }
 

@@ -5,20 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Guest Booking → Generate Invoice</title>
   <style>
-    /* Styling for the form */
     :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
-    header{max-width:780px;margin:32px auto 8px;padding:0 16px}
-    header h1{margin:0 0 6px}
+
+    /* --- Brand Banner --- */
+    .brandbar{
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(90deg,#0ea5e9 0%,#4f46e5 50%,#9333ea 100%);
+      color:#fff; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+    .brandwrap{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+    .brandlogo{
+      width:38px;height:38px;border-radius:999px;
+      display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.12); font-weight:800; letter-spacing:.5px;
+    }
+    .brandtxt{line-height:1.05}
+    .brandtxt .name{font-weight:1000}
+    .brandtxt .sub{font-size:12px;opacity:.9}
+
+    header{max-width:780px;margin:24px auto 8px;padding:0 16px}
+    header h1{margin:10px 0 6px}
     header p{margin:0;color:var(--muted)}
+
     .container{max-width:780px;margin:16px auto 60px;padding:0 16px;display:grid;gap:16px}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
     .card .body{padding:20px}
     .card h2{margin:0 0 12px;font-size:20px}
     .row{display:grid;gap:12px}
     @media (min-width:640px){.row.two{grid-template-columns:1fr 1fr}}
-    @media (min-width:900px){.row.three{grid-template-columns:1fr 1fr 1fr}}
     label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
     input,textarea,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:#0f1627;color:var(--text);outline:none}
     textarea{resize:vertical}
@@ -26,13 +44,36 @@
     button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
     button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
     button:disabled{opacity:.6;cursor:not-allowed}
+
+    /* Rooms row in one line */
     .room-row{display:grid;gap:10px;align-items:end;margin-bottom:10px;grid-template-columns: 1fr 1fr 1fr 1fr auto}
     .room-row .remove{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
     .room-toolbar{display:flex;gap:10px;margin:8px 0 2px}
-    @media (max-width:700px){ .room-row{grid-template-columns:1fr 1fr; } }
+    @media (max-width:700px){ .room-row{grid-template-columns:1fr 1fr;} }
+
+    /* Modern date preview */
+    .date-wrap{display:flex;gap:10px;align-items:center}
+    .pretty-date{min-width:160px;padding:10px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
+
+    @media print{
+      body{background:#fff}
+      .brandbar{background:#fff;color:#000;border-bottom:1px solid #ddd;box-shadow:none}
+      .brandlogo{border-color:#bbb;background:#f2f2f2;color:#000}
+    }
   </style>
 </head>
 <body>
+  <!-- Brand Banner -->
+  <div class="brandbar" role="banner" aria-label='Company banner: "Top-10", Sylhet - Bangladesh'>
+    <div class="brandwrap">
+      <div class="brandlogo">T10</div>
+      <div class="brandtxt">
+        <div class="name">Top-10</div>
+        <div class="sub">Sylhet - Bangladesh</div>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>Guest Booking Form</h1>
     <p class="muted">Enter details, add as many rooms as you need, and you'll be redirected to an invoice page with totals.</p>
@@ -68,15 +109,15 @@
           <!-- Default room (one line) -->
           <div class="room-row">
             <div>
-              <label>Room No *</label>
-              <input class="roomNo" type="text" required>
+              <label>Number of Rooms *</label>
+              <input class="roomQty" type="number" min="1" step="1" value="1" required>
             </div>
             <div>
               <label>Room View *</label>
               <select class="roomView" required>
-                <option value="Non view">Non view</option>
-                <option value="City view">City view</option>
-                <option value="Haram view">Haram view</option>
+                <option value="City">City</option>
+                <option value="Non">Non</option>
+                <option value="Nature">Nature</option>
               </select>
             </div>
             <div>
@@ -119,11 +160,17 @@
         <div class="row two">
           <div>
             <label for="checkIn">Check-in *</label>
-            <input id="checkIn" type="date" required>
+            <div class="date-wrap">
+              <input id="checkIn" type="date" required>
+              <div id="prettyIn" class="pretty-date">—</div>
+            </div>
           </div>
           <div>
             <label for="checkOut">Check-out *</label>
-            <input id="checkOut" type="date" required>
+            <div class="date-wrap">
+              <input id="checkOut" type="date" required>
+              <div id="prettyOut" class="pretty-date">—</div>
+            </div>
           </div>
         </div>
 
@@ -139,7 +186,6 @@
     const $ = s => document.querySelector(s);
     const roomsContainer = $('#roomsContainer');
 
-    // Remove room functionality
     function bindRemove(btn){
       btn.addEventListener('click', () => {
         const rows = roomsContainer.querySelectorAll('.room-row');
@@ -147,25 +193,22 @@
         btn.closest('.room-row').remove();
       });
     }
-
-    // Bind initial remove button
     bindRemove(roomsContainer.querySelector('.room-row .remove'));
 
-    // Function to create a new room row
     function makeRoomRow(init={}){
       const row = document.createElement('div');
       row.className = 'room-row';
       row.innerHTML = `
         <div>
-          <label>Room No *</label>
-          <input class="roomNo" type="text" required>
+          <label>Number of Rooms *</label>
+          <input class="roomQty" type="number" min="1" step="1" value="1" required>
         </div>
         <div>
           <label>Room View *</label>
           <select class="roomView" required>
-            <option value="Non view">Non view</option>
-            <option value="City view">City view</option>
-            <option value="Haram view">Haram view</option>
+            <option value="City">City</option>
+            <option value="Non">Non</option>
+            <option value="Nature">Nature</option>
           </select>
         </div>
         <div>
@@ -186,8 +229,7 @@
         </div>
         <button type="button" class="remove" aria-label="Remove room">Remove</button>
       `;
-      // Prefill if provided
-      if (init.roomNo) row.querySelector('.roomNo').value = init.roomNo;
+      if (init.qty != null) row.querySelector('.roomQty').value = init.qty;
       if (init.roomView) row.querySelector('.roomView').value = init.roomView;
       if (init.roomType) row.querySelector('.roomType').value = init.roomType;
       if (init.rate != null) row.querySelector('.rate').value = init.rate;
@@ -195,12 +237,33 @@
       return row;
     }
 
-    // Add room handler
     $('#addRoomBtn').addEventListener('click', () => {
       roomsContainer.appendChild(makeRoomRow());
     });
 
-    // Submit and redirect to invoice page
+    function fmtPretty(d){
+      if(!d) return '—';
+      const dt = new Date(d + 'T00:00:00');
+      if(Number.isNaN(+dt)) return '—';
+      return dt.toLocaleDateString(undefined,{year:'numeric', month:'long', day:'2-digit'});
+    }
+    function syncPretty(){
+      $('#prettyIn').textContent  = fmtPretty($('#checkIn').value);
+      $('#prettyOut').textContent = fmtPretty($('#checkOut').value);
+    }
+    $('#checkIn').addEventListener('change', syncPretty);
+    $('#checkOut').addEventListener('change', syncPretty);
+
+    (function initDates(){
+      const today = new Date();
+      const tomorrow = new Date(today.getTime()+86400000);
+      const pad = n => String(n).padStart(2,'0');
+      const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      $('#checkIn').value = ymd(today);
+      $('#checkOut').value = ymd(tomorrow);
+      syncPretty();
+    })();
+
     function submitAndRedirect(){
       const hotelName = $('#hotelName').value.trim();
       const hotelAddress = $('#hotelAddress').value.trim();
@@ -208,25 +271,24 @@
       const guestAddress = $('#guestAddress').value.trim();
       const checkin = $('#checkIn').value;
       const checkout = $('#checkOut').value;
-      const meals = $('#meals').value.trim(); // Get meal type value
+      const meals = $('#meals').value;
 
-      const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => ({
-        roomNo: row.querySelector('.roomNo').value.trim(),
-        roomView: row.querySelector('.roomView').value,
-        roomType: row.querySelector('.roomType').value,
-        rate: row.querySelector('.rate').value.trim()
-      }));
+      const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => {
+        const qty  = Number(row.querySelector('.roomQty')?.value ?? 0);
+        const rate = Number(row.querySelector('.rate')?.value ?? 0);
+        const roomView = row.querySelector('.roomView')?.value || '';
+        const roomType = row.querySelector('.roomType')?.value || '';
+        return { qty, roomView, roomType, rate };
+      });
 
-      // Basic validation for hotel, guest, and date fields
       if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout || !meals){
         alert('Please fill all required Hotel, Guest, Meal Type, and Date fields.');
         return;
       }
 
-      // Validate each room field
-      for (const room of rooms) {
-        if (!room.roomNo || !room.roomView || !room.roomType || !room.rate) {
-          alert('Please fill all room fields (Room No, View, Type, Rate).');
+      for (const r of rooms){
+        if(!Number.isInteger(r.qty) || r.qty < 1 || !isFinite(r.rate) || r.rate < 0 || !r.roomView || !r.roomType){
+          alert('Each room line needs: quantity ≥ 1, a view, a type, and a non-negative rate.');
           return;
         }
       }
@@ -235,22 +297,22 @@
         hotelName, hotelAddress, guestName, guestAddress, checkin, checkout, meals,
         rooms: JSON.stringify(rooms)
       });
-
       window.location.href = `invoice.html?${params.toString()}`;
     }
-
-    // Event listener for Submit button
     $('#btnSubmit').addEventListener('click', submitAndRedirect);
 
-    // Event listener for Reset button
     $('#btnReset').addEventListener('click', ()=>{ 
       document.querySelectorAll('input, textarea, select').forEach(e=>{ 
-        if(e.tagName==='SELECT') e.selectedIndex=0; 
-        else e.value=''; 
+        if(e.tagName==='SELECT') e.selectedIndex = 0; else e.value=''; 
       });
-      // keep one room row
       roomsContainer.innerHTML = '';
       roomsContainer.appendChild(makeRoomRow());
+      const today = new Date(), tomorrow = new Date(today.getTime()+86400000);
+      const pad = n => String(n).padStart(2,'0');
+      const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      $('#checkIn').value = ymd(today);
+      $('#checkOut').value = ymd(tomorrow);
+      syncPretty();
     });
   </script>
 </body>
