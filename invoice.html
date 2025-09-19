@@ -9,28 +9,39 @@
     *{box-sizing:border-box}
     body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
 
-    /* Brand Banner */
+    /* ===== Centered Brand Banner (Top) ===== */
     .brandbar{
-      position: sticky; top: 0; z-index: 50;
+      width:100%;
       background: linear-gradient(90deg,#0ea5e9 0%,#4f46e5 50%,#9333ea 100%);
-      color:#fff; box-shadow: 0 6px 20px rgba(0,0,0,.25);
+      color:#fff;
       border-bottom: 1px solid rgba(255,255,255,.15);
+      box-shadow: 0 6px 20px rgba(0,0,0,.25);
     }
-    .brandwrap{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+    .brandwrap{
+      max-width:1000px;
+      margin:0 auto;
+      padding:18px 16px 22px;
+      display:flex;
+      flex-direction:column;          /* stack logo then lines */
+      align-items:center;             /* center horizontally */
+      text-align:center;
+      gap:8px;
+    }
     .brandlogo{
-      width:38px;height:38px;border-radius:999px;
+      width:56px;height:56px;border-radius:999px;
       display:flex;align-items:center;justify-content:center;
-      border:1px solid rgba(255,255,255,.35);
-      background:rgba(255,255,255,.12); font-weight:800; letter-spacing:.5px;
+      border:1px solid rgba(255,255,255,.45);
+      background:rgba(255,255,255,.18);
+      font-weight:800; letter-spacing:.5px;
     }
-    .brandtxt{line-height:1.05}
-    .brandtxt .name{font-weight:1000}
-    .brandtxt .sub{font-size:12px;opacity:.9}
+    .brandtxt .name{font-weight:900;font-size:20px;letter-spacing:.3px}
+    .brandtxt .sub{font-size:13px;opacity:.95}
 
-    .wrap{max-width:1000px;margin:24px auto 60px;padding:0 16px}
+    /* Layout below banner */
+    .wrap{max-width:1000px;margin:22px auto 60px; padding:0 16px}
     .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
     .card .body{padding:20px}
-    .head{display:flex;justify-content:space-between;align-items:start;gap:16px}
+    .head{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap}
     .brand{font-weight:800;letter-spacing:.6px;font-size:22px}
     .muted{color:var(--muted)}
     table{width:100%;border-collapse:collapse;margin-top:14px}
@@ -41,30 +52,46 @@
     button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
     button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
     button.success{background:#22c55e}
-    @media print{
-      body{background:#fff}
-      .actions{display:none!important}
-      .card{box-shadow:none;border:0}
-      .card .body{padding:0}
-      .brandbar{background:#fff;color:#000;border-bottom:1px solid #ddd;box-shadow:none}
-      .brandlogo{border-color:#bbb;background:#f2f2f2;color:#000}
-    }
-    .error{max-width:1000px;margin:40px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
+    .error{max-width:1000px;margin:24px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
     tfoot td{border-bottom:0}
+
+    /* ===== Printer-friendly black & white ===== */
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      * { color: #000 !important; background: transparent !important; box-shadow: none !important; }
+      html, body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .brandbar { background: #fff !important; border-bottom: 1px solid #000 !important; }
+      .brandlogo { background:#fff !important; border:1px solid #000 !important; }
+      .brandtxt .name, .brandtxt .sub { color:#000 !important; }
+      .card { border: 1px solid #000 !important; }
+      .card .body { padding: 10 !important; }
+      .muted { color:#000 !important; }
+      table { border-collapse: collapse !important; width: 100%; }
+      th, td { border: 1px solid #000 !important; padding: 8px 10px !important; }
+      thead th, tfoot th, tfoot td { font-weight: 700 !important; }
+      #perNightSubtotal, #grandTotal { font-weight: 800 !important; }
+      tfoot tr:last-child td, tfoot tr:last-child th { border-top: 2px solid #000 !important; }
+      .actions { display:none !important; }
+      body { font-size: 12pt !important; }
+      .brand { font-size: 16pt !important; }
+      td { word-break: break-word; }
+      .brandwrap, .card, table, .head { page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
-  <!-- Brand Banner -->
+  <!-- CENTERED TOP BANNER -->
   <div class="brandbar" role="banner" aria-label='Company banner: "Top-10", Sylhet - Bangladesh'>
     <div class="brandwrap">
       <div class="brandlogo">T10</div>
       <div class="brandtxt">
-        <div class="name">Top-10</div>
+        <div class="name">"Top-10"</div>
         <div class="sub">Sylhet - Bangladesh</div>
       </div>
     </div>
   </div>
 
+  <!-- INVOICE CONTENT BELOW BANNER -->
   <div id="error" class="error" style="display:none"></div>
   <div class="wrap">
     <section class="card">
@@ -92,7 +119,7 @@
         <table id="roomsTable">
           <thead>
             <tr>
-              <th>Number of room(s)</th>
+              <th>Qty</th>
               <th>View</th>
               <th>Type</th>
               <th class="right">Rate (Tk)</th>
