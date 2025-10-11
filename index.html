@@ -371,156 +371,188 @@
     </section>
   </div>
 
-  <script>
-    const $ = s => document.querySelector(s);
-    const roomsContainer = $('#roomsContainer');
+<script>
+  const $ = s => document.querySelector(s);
+  const roomsContainer = $('#roomsContainer');
 
-    function bindRemove(btn){
-      btn.addEventListener('click', () => {
-        const rows = roomsContainer.querySelectorAll('.room-row');
-        if (rows.length <= 1) { alert('At least one room is required.'); return; }
-        btn.closest('.room-row').remove();
-      });
-    }
-    bindRemove(roomsContainer.querySelector('.room-row .remove'));
+  function bindRemove(btn){
+    btn.addEventListener('click', () => {
+      const rows = roomsContainer.querySelectorAll('.room-row');
+      if (rows.length <= 1) { alert('At least one room is required.'); return; }
+      btn.closest('.room-row').remove();
+    });
+  }
+  // Bind initial remove
+  bindRemove(roomsContainer.querySelector('.room-row .remove'));
 
-    function makeRoomRow(init={}){
-      const row = document.createElement('div');
-      row.className = 'room-row';
-      row.innerHTML = `
-        <div class="field">
-          <label>Number of Rooms *</label>
-          <input class="roomQty" type="number" min="1" step="1" value="1" required>
-        </div>
-        <div class="field">
-          <label>Room View *</label>
-          <select class="roomView" required>
-            <option value="Non view">Non view</option>
-            <option value="City view">City view</option>
-            <option value="Haram view">Haram view</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Room Type *</label>
-          <select class="roomType" required>
-            <option value="Single Bed">Single Bed</option>
-            <option value="Double Bed">Double Bed</option>
-            <option value="Suite">Suite</option>
-            <option value="Triple">Triple</option>
-            <option value="Quad">Quad</option>
-            <option value="Quint">Quint</option>
-            <option value="Hexa">Hexa</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Room Rate (Tk) *</label>
-          <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
-        </div>
-        <div class="field">
-          <label>Meal Type</label>
-          <select class="mealType">
-            <option value="None">None</option>
-            <option value="Breakfast">Breakfast</option>
-            <option value="Half Board">Half Board (Breakfast + Dinner)</option>
-            <option value="Full Board">Full Board (All Meals)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Meal Rate (Tk)</label>
-          <input class="mealRate" type="number" min="0" step="1" placeholder="0" value="0">
-        </div>
-        <div class="remove-wrap">
-          <button type="button" class="remove" aria-label="Remove room">Remove Room</button>
-        </div>
-      `;
-      if (init.qty != null) row.querySelector('.roomQty').value = init.qty;
-      if (init.roomView) row.querySelector('.roomView').value = init.roomView;
-      if (init.roomType) row.querySelector('.roomType').value = init.roomType;
-      if (init.rate != null) row.querySelector('.rate').value = init.rate;
-      if (init.mealType) row.querySelector('.mealType').value = init.mealType;
-      if (init.mealRate != null) row.querySelector('.mealRate').value = init.mealRate;
-      bindRemove(row.querySelector('.remove'));
-      return row;
-    }
+  function makeRoomRow(init={}){
+    const row = document.createElement('div');
+    row.className = 'room-row';
+    row.innerHTML = `
+      <div class="field">
+        <label>Number of Rooms *</label>
+        <input class="roomQty" type="number" min="1" step="1" value="1" required>
+      </div>
+      <div class="field">
+        <label>Room View *</label>
+        <select class="roomView" required>
+          <option value="Non view">Non view</option>
+          <option value="City view">City view</option>
+          <option value="Haram view">Haram view</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Room Type *</label>
+        <select class="roomType" required>
+          <option value="Single Bed">Single Bed</option>
+          <option value="Double Bed">Double Bed</option>
+          <option value="Suite">Suite</option>
+          <option value="Triple">Triple</option>
+          <option value="Quad">Quad</option>
+          <option value="Quint">Quint</option>
+          <option value="Hexa">Hexa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Room Rate (Tk) *</label>
+        <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
+      </div>
+      <div class="field">
+        <label>Meal Type</label>
+        <select class="mealType">
+          <option value="None">None</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Half Board">Half Board (Breakfast + Dinner)</option>
+          <option value="Full Board">Full Board (All Meals)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Meal Rate (Tk)</label>
+        <input class="mealRate" type="number" min="0" step="1" placeholder="0" value="0">
+      </div>
+      <div class="remove-wrap">
+        <button type="button" class="remove" aria-label="Remove room">Remove Room</button>
+      </div>
+    `;
+    if (init.qty != null)       row.querySelector('.roomQty').value = init.qty;
+    if (init.roomView)          row.querySelector('.roomView').value = init.roomView;
+    if (init.roomType)          row.querySelector('.roomType').value = init.roomType;
+    if (init.rate != null)      row.querySelector('.rate').value = init.rate;
+    if (init.mealType)          row.querySelector('.mealType').value = init.mealType;
+    if (init.mealRate != null)  row.querySelector('.mealRate').value = init.mealRate;
+    bindRemove(row.querySelector('.remove'));
+    return row;
+  }
 
-    $('#addRoomBtn').addEventListener('click', () => {
+  $('#addRoomBtn').addEventListener('click', () => {
+    roomsContainer.appendChild(makeRoomRow());
+  });
+
+  function fmtPretty(d){
+    if(!d) return '—';
+    const dt = new Date(d + 'T00:00:00');
+    if(Number.isNaN(+dt)) return '—';
+    return dt.toLocaleDateString(undefined,{year:'numeric', month:'long', day:'2-digit'});
+  }
+  function syncPretty(){
+    $('#prettyIn')  && ($('#prettyIn').textContent  = fmtPretty($('#checkIn').value));
+    $('#prettyOut') && ($('#prettyOut').textContent = fmtPretty($('#checkOut').value));
+  }
+
+  function setDefaultDates(){
+    const today = new Date();
+    const tomorrow = new Date(today.getTime()+86400000);
+    const pad = n => String(n).padStart(2,'0');
+    const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    $('#checkIn').value  = ymd(today);
+    $('#checkOut').value = ymd(tomorrow);
+    syncPretty();
+  }
+
+  // NEW: Prefill form from query string (called on load)
+  function prefillFromQuery(){
+    const p = new URLSearchParams(location.search);
+    if (!p.has('rooms')) return false; // nothing to prefill
+
+    const set = (sel,val)=>{ const el=$(sel); if(el && val!=null) el.value=val; };
+
+    set('#hotelName',    p.get('hotelName'));
+    set('#hotelAddress', p.get('hotelAddress'));
+    set('#guestName',    p.get('guestName'));
+    set('#guestAddress', p.get('guestAddress'));
+    set('#checkIn',      p.get('checkin'));
+    set('#checkOut',     p.get('checkout'));
+    syncPretty();
+
+    let rooms = [];
+    try { rooms = JSON.parse(p.get('rooms') || '[]'); } catch(e){ rooms = []; }
+
+    // rebuild room rows exactly as sent from invoice
+    roomsContainer.innerHTML = '';
+    if (Array.isArray(rooms) && rooms.length){
+      for (const r of rooms) roomsContainer.appendChild(makeRoomRow(r));
+    } else {
       roomsContainer.appendChild(makeRoomRow());
+    }
+    return true;
+  }
+
+  // Wire date pretty preview updates
+  $('#checkIn').addEventListener('change', syncPretty);
+  $('#checkOut').addEventListener('change', syncPretty);
+
+  // On load: prefill if query exists; otherwise keep your current default behavior
+  (function init(){
+    const filled = prefillFromQuery();
+    if (!filled) setDefaultDates();
+  })();
+
+  function submitAndRedirect(){
+    const hotelName    = $('#hotelName').value.trim();
+    const hotelAddress = $('#hotelAddress').value.trim();
+    const guestName    = $('#guestName').value.trim();
+    const guestAddress = $('#guestAddress').value.trim();
+    const checkin      = $('#checkIn').value;
+    const checkout     = $('#checkOut').value;
+
+    const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => {
+      const qty      = Number(row.querySelector('.roomQty')?.value ?? 0);
+      const rate     = Number(row.querySelector('.rate')?.value ?? 0);
+      const mealRate = Number(row.querySelector('.mealRate')?.value ?? 0);
+      const roomView = row.querySelector('.roomView')?.value || '';
+      const roomType = row.querySelector('.roomType')?.value || '';
+      const mealType = row.querySelector('.mealType')?.value || 'None';
+      return { qty, roomView, roomType, rate, mealType, mealRate };
     });
 
-    function fmtPretty(d){
-      if(!d) return '—';
-      const dt = new Date(d + 'T00:00:00');
-      if(Number.isNaN(+dt)) return '—';
-      return dt.toLocaleDateString(undefined,{year:'numeric', month:'long', day:'2-digit'});
+    if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout){
+      alert('Please fill all required fields.');
+      return;
     }
-    function syncPretty(){
-      $('#prettyIn').textContent  = fmtPretty($('#checkIn').value);
-      $('#prettyOut').textContent = fmtPretty($('#checkOut').value);
-    }
-    $('#checkIn').addEventListener('change', syncPretty);
-    $('#checkOut').addEventListener('change', syncPretty);
-
-    (function initDates(){
-      const today = new Date();
-      const tomorrow = new Date(today.getTime()+86400000);
-      const pad = n => String(n).padStart(2,'0');
-      const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-      $('#checkIn').value = ymd(today);
-      $('#checkOut').value = ymd(tomorrow);
-      syncPretty();
-    })();
-
-    function submitAndRedirect(){
-      const hotelName = $('#hotelName').value.trim();
-      const hotelAddress = $('#hotelAddress').value.trim();
-      const guestName = $('#guestName').value.trim();
-      const guestAddress = $('#guestAddress').value.trim();
-      const checkin = $('#checkIn').value;
-      const checkout = $('#checkOut').value;
-
-      const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => {
-        const qty  = Number(row.querySelector('.roomQty')?.value ?? 0);
-        const rate = Number(row.querySelector('.rate')?.value ?? 0);
-        const mealRate = Number(row.querySelector('.mealRate')?.value ?? 0);
-        const roomView = row.querySelector('.roomView')?.value || '';
-        const roomType = row.querySelector('.roomType')?.value || '';
-        const mealType = row.querySelector('.mealType')?.value || 'None';
-        return { qty, roomView, roomType, rate, mealType, mealRate };
-      });
-
-      if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout){
-        alert('Please fill all required fields.');
+    for (const r of rooms){
+      if(!Number.isInteger(r.qty) || r.qty < 1 || !isFinite(r.rate) || r.rate < 0 || !r.roomView || !r.roomType){
+        alert('Each room needs: quantity ≥ 1, a view, a type, and a non-negative rate.');
         return;
       }
-
-      for (const r of rooms){
-        if(!Number.isInteger(r.qty) || r.qty < 1 || !isFinite(r.rate) || r.rate < 0 || !r.roomView || !r.roomType){
-          alert('Each room needs: quantity ≥ 1, a view, a type, and a non-negative rate.');
-          return;
-        }
-      }
-
-      const params = new URLSearchParams({
-        hotelName, hotelAddress, guestName, guestAddress, checkin, checkout,
-        rooms: JSON.stringify(rooms)
-      });
-      window.location.href = `invoice.html?${params.toString()}`;
     }
-    $('#btnSubmit').addEventListener('click', submitAndRedirect);
 
-    $('#btnReset').addEventListener('click', ()=>{ 
-      document.querySelectorAll('input, textarea, select').forEach(e=>{ 
-        if(e.tagName==='SELECT') e.selectedIndex = 0; else e.value=''; 
-      });
-      roomsContainer.innerHTML = '';
-      roomsContainer.appendChild(makeRoomRow());
-      const today = new Date(), tomorrow = new Date(today.getTime()+86400000);
-      const pad = n => String(n).padStart(2,'0');
-      const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-      $('#checkIn').value = ymd(today);
-      $('#checkOut').value = ymd(tomorrow);
-      syncPretty();
+    const params = new URLSearchParams({
+      hotelName, hotelAddress, guestName, guestAddress, checkin, checkout,
+      rooms: JSON.stringify(rooms)
     });
-  </script>
+    window.location.href = `invoice.html?${params.toString()}`;
+  }
+  $('#btnSubmit').addEventListener('click', submitAndRedirect);
+
+  $('#btnReset').addEventListener('click', ()=>{ 
+    document.querySelectorAll('input, textarea, select').forEach(e=>{ 
+      if(e.tagName==='SELECT') e.selectedIndex = 0; else e.value=''; 
+    });
+    roomsContainer.innerHTML = '';
+    roomsContainer.appendChild(makeRoomRow());
+    setDefaultDates();
+  });
+</script>
+
 </body>
 </html>

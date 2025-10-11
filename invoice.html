@@ -386,12 +386,20 @@
           </thead>
           <tbody id="roomsBody"></tbody>
           <tfoot>
-            <tr class="subtotal-row">
-              <th colspan="6" class="right">Per-night Subtotal</th>
-              <td id="perNightSubtotal" class="right"></td>
+            <tr>
+              <th colspan="6" class="right">Room Rent Total (per night)</th>
+              <td id="roomRentPerNight" class="right"></td>
             </tr>
-            <tr class="grand-total-row">
-              <th colspan="6" class="right">Total (Nights × Subtotal)</th>
+            <tr>
+              <th colspan="6" class="right">Meal Total (per night)</th>
+              <td id="mealPerNight" class="right"></td>
+            </tr>
+            <tr>
+              <th colspan="6" class="right">Total Per Night</th>
+              <td id="totalPerNight" class="right"></td>
+            </tr>
+            <tr style="font-weight:800">
+              <th colspan="6" class="right">Total (Nights × Total Per Night)</th>
               <td id="grandTotal" class="right"></td>
             </tr>
           </tfoot>
@@ -405,78 +413,107 @@
     </section>
   </div>
 
-  <script>
-    const $ = s => document.querySelector(s);
-    const toLocal = d => new Date(d).toLocaleDateString(undefined, {year:'numeric',month:'short',day:'2-digit'});
+<script>
+  const $ = s => document.querySelector(s);
+  const toLocal = d => new Date(d).toLocaleDateString(
+    undefined, { year:'numeric', month:'short', day:'2-digit' }
+  );
+  const fmtTk = n => `${Number(n||0).toLocaleString()} Tk`;
 
-    function loadFromQuery(){
-      const p = new URLSearchParams(location.search);
-      const get = k => (p.get(k)||'').trim();
-      const hotelName = get('hotelName');
-      const hotelAddress = get('hotelAddress');
-      const guestName = get('guestName');
-      const guestAddress = get('guestAddress');
-      const ci = get('checkin');
-      const co = get('checkout');
-      let rooms = [];
-      try { rooms = JSON.parse(p.get('rooms') || '[]'); } catch(e){ rooms = []; }
+  function showErr(msg){
+    const e = $('#error');
+    if (e){ e.style.display='block'; e.textContent = msg; } else { alert(msg); }
+  }
 
-      if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!rooms.length){
-        return showErr('Missing details. Please go back and fill the form.');
-      }
-      const n = Math.max(0, Math.round((new Date(co)-new Date(ci))/(24*60*60*1000)));
-      if(n <= 0) return showErr('Check-out must be after Check-in.');
+  function loadFromQuery(){
+    const p = new URLSearchParams(location.search);
+    const get = k => (p.get(k)||'').trim();
 
-      $('#hotelBrand').textContent = hotelName;
-      $('#hotelAddr').textContent = hotelAddress;
-      $('#vGuestName').textContent = guestName;
-      $('#vGuestAddress').innerHTML = guestAddress.replace(/\n/g,'<br>');
-      $('#vIn').textContent = toLocal(ci);
-      $('#vOut').textContent = toLocal(co);
-      $('#vNights').textContent = `${n} night${n>1?'s':''}`;
-      $('#invDate').textContent = toLocal(new Date());
+    const hotelName    = get('hotelName');
+    const hotelAddress = get('hotelAddress');
+    const guestName    = get('guestName');
+    const guestAddress = get('guestAddress');
+    const ci           = get('checkin');
+    const co           = get('checkout');
+    const overallMeals = get('meals'); // fallback meal type if per-room not present
 
-      const body = $('#roomsBody');
-      body.innerHTML = '';
-      let perNight = 0;
-      
-      for(const r of rooms){
-        const qty = Number(r.qty || 0);
-        const rate = Number(r.rate || 0);
-        const mealRate = Number(r.mealRate || 0);
-        const roomLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(rate)?rate:0);
-        const mealLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(mealRate)?mealRate:0);
-        const totalLine = roomLine + mealLine;
-        
-        perNight += totalLine;
+    let rooms = [];
+    try { rooms = JSON.parse(p.get('rooms') || '[]'); } catch(e){ rooms = []; }
 
+    if(!hotelName||!hotelAddress||!guestName||!guestAddress||!ci||!co||!rooms.length){
+      return showErr('Missing details. Please go back and fill the form.');
+    }
+    const nights = Math.max(0, Math.round((new Date(co)-new Date(ci)) / (24*60*60*1000)));
+    if (nights <= 0) return showErr('Check-out must be after Check-in.');
+
+    // Fill header/meta
+    $('#hotelBrand')   && ($('#hotelBrand').textContent   = hotelName);
+    $('#hotelAddr')    && ($('#hotelAddr').textContent    = hotelAddress);
+    $('#vGuestName')   && ($('#vGuestName').textContent   = guestName);
+    $('#vGuestAddress')&& ($('#vGuestAddress').innerHTML  = guestAddress.replace(/\n/g,'<br>'));
+    $('#vIn')          && ($('#vIn').textContent          = toLocal(ci));
+    $('#vOut')         && ($('#vOut').textContent         = toLocal(co));
+    $('#vNights')      && ($('#vNights').textContent      = `${nights} night${nights>1?'s':''}`);
+    $('#invDate')      && ($('#invDate').textContent      = toLocal(new Date()));
+
+    // Build detail rows
+    const body = document.getElementById('roomsBody') || document.querySelector('#roomsTable tbody');
+    if (body) body.innerHTML = '';
+
+    let roomRentPerNight = 0; // Σ qty * rate
+    let mealPerNight     = 0; // Σ qty * mealRate
+    let totalPerNight    = 0; // Σ qty * (rate + mealRate)
+
+    rooms.forEach(r => {
+      const qty      = Number.isFinite(+r.qty)      ? +r.qty      : 0;
+      const rate     = Number.isFinite(+r.rate)     ? +r.rate     : 0;
+      const mealRate = Number.isFinite(+r.mealRate) ? +r.mealRate : 0;
+      const mealType = (r.mealType && String(r.mealType).trim()) || overallMeals || 'None';
+      const view     = r.roomView || '';
+      const type     = r.roomType || '';
+
+      const roomLine = qty * rate;
+      const mealLine = qty * mealRate;
+      const line     = roomLine + mealLine;
+
+      roomRentPerNight += roomLine;
+      mealPerNight     += mealLine;
+      totalPerNight    += line;
+
+      if (body){
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="center">${qty}</td>
-          <td>${r.roomView || ''}</td>
-          <td>${r.roomType || ''}</td>
-          <td class="right">${(Number.isFinite(rate)?rate:0).toLocaleString()} Tk</td>
-          <td>${r.mealType || 'None'}</td>
-          <td class="right">${(Number.isFinite(mealRate)?mealRate:0).toLocaleString()} Tk</td>
-          <td class="right"><strong>${totalLine.toLocaleString()} Tk</strong></td>
-        `;
+        const cells = [
+          qty,                // Qty
+          view,               // View
+          type,               // Type
+          fmtTk(rate),        // Rate (Tk)
+          mealType,           // Meal Type
+          fmtTk(mealRate),    // Meal Rate (Tk)
+          fmtTk(line)         // Line / Night (Tk)
+        ];
+        cells.forEach((val, idx) => {
+          const td = document.createElement('td');
+          td.textContent = val;
+          if (idx === 3 || idx === 5 || idx === 6) td.className = 'right';
+          tr.appendChild(td);
+        });
         body.appendChild(tr);
       }
-      
-      $('#perNightSubtotal').textContent = `${perNight.toLocaleString()} Tk`;
-      $('#grandTotal').textContent = `${(perNight * n).toLocaleString()} Tk`;
+    });
 
-      $('#editLink').href = `index.html?${p.toString()}`;
-    }
+    // Footer totals
+    $('#roomRentPerNight') && ($('#roomRentPerNight').textContent = fmtTk(roomRentPerNight));
+    $('#mealPerNight')     && ($('#mealPerNight').textContent     = fmtTk(mealPerNight));
+    $('#totalPerNight')    && ($('#totalPerNight').textContent    = fmtTk(totalPerNight));
+    $('#grandTotal')       && ($('#grandTotal').textContent       = fmtTk(totalPerNight * nights));
 
-    function showErr(msg){
-      const e = $('#error');
-      e.style.display = 'block';
-      e.textContent = msg;
-    }
+    // Keep Edit Details round-trip intact
+    $('#editLink') && ($('#editLink').href = `index.html?${p.toString()}`);
+  }
 
-    $('#btnPrint').addEventListener('click', ()=>window.print());
-    loadFromQuery();
-  </script>
+  document.getElementById('btnPrint')?.addEventListener('click', () => window.print());
+  loadFromQuery();
+</script>
+
 </body>
 </html>
