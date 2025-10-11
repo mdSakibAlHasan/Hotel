@@ -122,32 +122,55 @@
       background:rgba(15, 23, 42, 0.5);
     }
     
-    #roomsTable thead th{
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(139, 92, 246, 0.15));
+    h3{
+      margin:32px 0 16px;
+      font-size:24px;
       color:var(--accent);
-      font-size:14px;
+    }
+
+    #roomsTable{
+      background:rgba(15, 23, 42, 0.3);
+      border-radius:12px;
+      overflow:hidden;
+    }
+    #roomsTable thead th{
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(245, 158, 11, 0.15));
+      color:var(--text);
+      font-size:15px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
     }
     #roomsTable tbody td{
       font-size:15px;
+      background:rgba(15, 23, 42, 0.4);
+    }
+    #roomsTable tbody tr:hover{
+      background:rgba(139, 92, 246, 0.08);
+    }
+    
+    #roomsTable tfoot{
+      background:rgba(139, 92, 246, 0.1);
     }
     #roomsTable tfoot td,
     #roomsTable tfoot th{
       font-weight:700;
       font-size:16px;
-      background:rgba(139, 92, 246, 0.08);
       border-top:2px solid var(--border);
+      border-bottom:0;
+    }
+    .subtotal-row td,
+    .subtotal-row th{
+      padding-top:16px;
     }
     .grand-total-row td,
     .grand-total-row th{
       font-weight:900;
-      font-size:18px;
-      background:rgba(245, 158, 11, 0.1);
-      border-top:3px solid var(--accent);
-    }
-    #grandTotal{
-      font-weight:900;
-      font-size:22px;
+      font-size:20px;
       color:var(--accent);
+      padding-top:16px;
+      padding-bottom:16px;
+      border-top:3px solid var(--accent);
     }
     
     .actions{
@@ -196,12 +219,6 @@
       border-radius:16px;
       padding:20px 24px;
       box-shadow:0 8px 24px rgba(220, 38, 38, 0.3);
-    }
-    
-    h3{
-      margin:32px 0 12px;
-      font-size:24px;
-      color:var(--accent);
     }
 
     @page { 
@@ -277,13 +294,18 @@
         color: #444 !important;
       }
       
+      h3 {
+        color: #000 !important;
+      }
+      
       table {
         border-collapse: collapse !important;
+        page-break-inside: avoid;
       }
       
       th, td {
         border: 1px solid #666 !important;
-        padding: 10px 12px !important;
+        padding: 8px 12px !important;
         color: #000 !important;
         background: transparent !important;
       }
@@ -293,32 +315,16 @@
         font-weight: 800 !important;
       }
       
-      #roomsTable thead th {
-        background: rgba(245, 158, 11, 0.2) !important;
-      }
-      
       #roomsTable tfoot td,
       #roomsTable tfoot th {
-        font-weight: 900 !important;
-        border-top: 3px solid #000 !important;
-        background: rgba(139, 92, 246, 0.1) !important;
+        border-top: 2px solid #000 !important;
       }
       
       .grand-total-row td,
       .grand-total-row th {
         font-weight: 900 !important;
         font-size: 16pt !important;
-        border-top: 4px solid #000 !important;
-        background: rgba(245, 158, 11, 0.15) !important;
-      }
-      
-      #grandTotal {
-        font-weight: 900 !important;
-        font-size: 18pt !important;
-        color: #000 !important;
-      }
-      
-      h3 {
+        border-top: 3px solid #000 !important;
         color: #000 !important;
       }
       
@@ -327,7 +333,7 @@
       }
       
       body {
-        font-size: 11pt !important;
+        font-size: 10pt !important;
       }
     }
   </style>
@@ -365,43 +371,35 @@
           </tbody>
         </table>
 
-        <h3>Room & Meal Details</h3>
+        <h3>Rooms</h3>
         <table id="roomsTable">
           <thead>
             <tr>
               <th>Qty</th>
               <th>View</th>
               <th>Type</th>
-              <th class="right">Room Rate (Tk)</th>
+              <th class="right">Rate (Tk)</th>
               <th>Meal Type</th>
               <th class="right">Meal Rate (Tk)</th>
-              <th class="right">Total/Night (Tk)</th>
+              <th class="right">Line / Night (Tk)</th>
             </tr>
           </thead>
           <tbody id="roomsBody"></tbody>
           <tfoot>
-            <tr>
-              <th colspan="6" class="right">Room Subtotal (Per Night)</th>
-              <td id="roomSubtotal" class="right"></td>
-            </tr>
-            <tr>
-              <th colspan="6" class="right">Meal Subtotal (Per Night)</th>
-              <td id="mealSubtotal" class="right"></td>
-            </tr>
-            <tr>
-              <th colspan="6" class="right">Per-Night Subtotal</th>
+            <tr class="subtotal-row">
+              <th colspan="6" class="right">Per-night Subtotal</th>
               <td id="perNightSubtotal" class="right"></td>
             </tr>
             <tr class="grand-total-row">
-              <th colspan="6" class="right">GRAND TOTAL (Nights × Subtotal)</th>
+              <th colspan="6" class="right">Total (Nights × Subtotal)</th>
               <td id="grandTotal" class="right"></td>
             </tr>
           </tfoot>
         </table>
 
         <div class="actions">
-          <button id="btnPrint" class="success" type="button">🖨️ Print / Save PDF</button>
-          <a id="editLink" href="index.html" class="btn-link">✏️ Edit Details</a>
+          <button id="btnPrint" class="success" type="button">Print / Save PDF</button>
+          <a id="editLink" href="index.html" class="btn-link">Edit Details</a>
         </div>
       </div>
     </section>
@@ -440,19 +438,17 @@
 
       const body = $('#roomsBody');
       body.innerHTML = '';
-      let roomTotal = 0;
-      let mealTotal = 0;
+      let perNight = 0;
       
       for(const r of rooms){
-        const qty  = Number(r.qty || 0);
+        const qty = Number(r.qty || 0);
         const rate = Number(r.rate || 0);
         const mealRate = Number(r.mealRate || 0);
         const roomLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(rate)?rate:0);
         const mealLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(mealRate)?mealRate:0);
         const totalLine = roomLine + mealLine;
         
-        roomTotal += roomLine;
-        mealTotal += mealLine;
+        perNight += totalLine;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -467,13 +463,8 @@
         body.appendChild(tr);
       }
       
-      const perNightTotal = roomTotal + mealTotal;
-      const grandTotal = perNightTotal * n;
-      
-      $('#roomSubtotal').textContent = `${roomTotal.toLocaleString()} Tk`;
-      $('#mealSubtotal').textContent = `${mealTotal.toLocaleString()} Tk`;
-      $('#perNightSubtotal').textContent = `${perNightTotal.toLocaleString()} Tk`;
-      $('#grandTotal').textContent = `${grandTotal.toLocaleString()} Tk`;
+      $('#perNightSubtotal').textContent = `${perNight.toLocaleString()} Tk`;
+      $('#grandTotal').textContent = `${(perNight * n).toLocaleString()} Tk`;
 
       $('#editLink').href = `index.html?${p.toString()}`;
     }
