@@ -3,95 +3,346 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Invoice</title>
+  <title>Invoice - Deyaar Makkah Bangladesh</title>
   <style>
-    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
+    :root { 
+      --bg:#0a0e1a; 
+      --card:#1a1f35; 
+      --muted:#94a3b8; 
+      --text:#f1f5f9; 
+      --accent:#f59e0b;
+      --secondary:#8b5cf6;
+      --border:#334155; 
+      --shadow:0 20px 50px rgba(0,0,0,.5);
+      --gold:#d4af37;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      margin:0;
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e1b4b 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
 
-    /* ===== Centered Brand Banner (Top) ===== */
     .brandbar{
       width:100%;
-      background: linear-gradient(90deg,#0ea5e9 0%,#4f46e5 50%,#9333ea 100%);
+      background: linear-gradient(135deg, #991b1b 0%, #b91c1c 25%, #dc2626 50%, #b91c1c 75%, #991b1b 100%);
       color:#fff;
-      border-bottom: 1px solid rgba(255,255,255,.15);
-      box-shadow: 0 6px 20px rgba(0,0,0,.25);
+      border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 8px 32px rgba(185, 28, 28, 0.4);
     }
     .brandwrap{
-      max-width:1000px;
+      max-width:1200px;
       margin:0 auto;
-      padding:18px 16px 22px;
+      padding:24px 24px 28px;
       display:flex;
-      flex-direction:column;          /* stack logo then lines */
-      align-items:center;             /* center horizontally */
+      flex-direction:column;
+      align-items:center;
       text-align:center;
-      gap:8px;
+      gap:12px;
     }
     .brandlogo{
-      width:56px;height:56px;border-radius:999px;
-      display:flex;align-items:center;justify-content:center;
-      border:1px solid rgba(255,255,255,.45);
-      background:rgba(255,255,255,.18);
-      font-weight:800; letter-spacing:.5px;
+      width:80px;
+      height:80px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:3px solid var(--gold);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(255, 255, 255, 0.15));
+      font-weight:900;
+      font-size:28px;
+      letter-spacing:2px;
+      color:var(--gold);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
-    .brandtxt .name{font-weight:900;font-size:20px;letter-spacing:.3px}
-    .brandtxt .sub{font-size:13px;opacity:.95}
+    .brandtxt .name{
+      font-weight:900;
+      font-size:26px;
+      letter-spacing:1px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    }
+    .brandtxt .sub{
+      font-size:14px;
+      opacity:.95;
+      color:rgba(255,255,255,0.9);
+    }
 
-    /* Layout below banner */
-    .wrap{max-width:1000px;margin:22px auto 60px; padding:0 16px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-    .card .body{padding:20px}
-    .head{display:flex;justify-content:space-between;align-items:start;gap:16px;flex-wrap:wrap}
-    .brand{font-weight:800;letter-spacing:.6px;font-size:22px}
+    .wrap{
+      max-width:1200px;
+      margin:32px auto 80px;
+      padding:0 24px;
+    }
+    .card{
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(245, 158, 11, 0.03));
+      border:2px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .card .body{padding:40px}
+    .head{
+      display:flex;
+      justify-content:space-between;
+      align-items:start;
+      gap:24px;
+      flex-wrap:wrap;
+      margin-bottom:32px;
+      padding-bottom:24px;
+      border-bottom:2px solid var(--border);
+    }
+    .brand{
+      font-weight:800;
+      letter-spacing:1px;
+      font-size:28px;
+      color:var(--accent);
+    }
     .muted{color:var(--muted)}
-    table{width:100%;border-collapse:collapse;margin-top:14px}
-    th,td{text-align:left;padding:10px;border-bottom:1px dashed var(--border)}
-    th{color:var(--muted);font-weight:600}
+    
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+    }
+    th,td{
+      text-align:left;
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+    }
+    th{
+      color:var(--muted);
+      font-weight:700;
+      background:rgba(139, 92, 246, 0.05);
+    }
     .right{text-align:right}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;justify-content:flex-end}
-    button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
-    button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
-    button.success{background:#22c55e}
-    .error{max-width:1000px;margin:24px auto;color:#fff;background:#9a1c1c;border:1px solid #d33;border-radius:12px;padding:14px 16px}
-    tfoot td{border-bottom:0}
+    .center{text-align:center}
+    
+    .info-table td{
+      background:rgba(15, 23, 42, 0.5);
+    }
+    
+    #roomsTable thead th{
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(139, 92, 246, 0.15));
+      color:var(--accent);
+      font-size:14px;
+    }
+    #roomsTable tbody td{
+      font-size:15px;
+    }
+    #roomsTable tfoot td,
+    #roomsTable tfoot th{
+      font-weight:700;
+      font-size:16px;
+      background:rgba(139, 92, 246, 0.08);
+      border-top:2px solid var(--border);
+    }
+    .grand-total-row td,
+    .grand-total-row th{
+      font-weight:900;
+      font-size:18px;
+      background:rgba(245, 158, 11, 0.1);
+      border-top:3px solid var(--accent);
+    }
+    #grandTotal{
+      font-weight:900;
+      font-size:22px;
+      color:var(--accent);
+    }
+    
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:32px;
+      justify-content:flex-end;
+    }
+    button, .btn-link{
+      border:0;
+      padding:14px 28px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+      transition: all 0.3s ease;
+      text-decoration:none;
+      display:inline-block;
+    }
+    button.success{
+      background: linear-gradient(135deg, #10b981, #059669);
+      color:#fff;
+      box-shadow:0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+    button.success:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    .btn-link{
+      background: linear-gradient(135deg, var(--secondary), #7c3aed);
+      color:#fff;
+      box-shadow:0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+    .btn-link:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+    
+    .error{
+      max-width:1200px;
+      margin:32px auto;
+      color:#fff;
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      border:2px solid #991b1b;
+      border-radius:16px;
+      padding:20px 24px;
+      box-shadow:0 8px 24px rgba(220, 38, 38, 0.3);
+    }
+    
+    h3{
+      margin:32px 0 12px;
+      font-size:24px;
+      color:var(--accent);
+    }
 
-    /* ===== Printer-friendly black & white ===== */
-    @page { size: A4; margin: 12mm; }
+    @page { 
+      size: A4; 
+      margin: 12mm; 
+    }
+    
     @media print {
-      * { color: #000 !important; background: transparent !important; box-shadow: none !important; }
-      html, body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .brandbar { background: #fff !important; border-bottom: 1px solid #000 !important; }
-      .brandlogo { background:#fff !important; border:1px solid #000 !important; }
-      .brandtxt .name, .brandtxt .sub { color:#000 !important; }
-      .card { border: 1px solid #000 !important; }
-      .card .body { padding: 10 !important; }
-      .muted { color:#000 !important; }
-      table { border-collapse: collapse !important; width: 100%; }
-      th, td { border: 1px solid #000 !important; padding: 8px 10px !important; }
-      thead th, tfoot th, tfoot td { font-weight: 700 !important; }
-      #perNightSubtotal, #grandTotal { font-weight: 800 !important; }
-      tfoot tr:last-child td, tfoot tr:last-child th { border-top: 2px solid #000 !important; }
-      .actions { display:none !important; }
-      body { font-size: 12pt !important; }
-      .brand { font-size: 16pt !important; }
-      td { word-break: break-word; }
-      .brandwrap, .card, table, .head { page-break-inside: avoid; }
+      * { 
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      
+      body {
+        background: #fff !important;
+        position: relative;
+      }
+      
+      body::before {
+        content: '';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70%;
+        height: 85%;
+        opacity: 0.08;
+        z-index: 0;
+        background: 
+          linear-gradient(135deg, rgba(139, 28, 32, 0.15) 0%, rgba(203, 45, 54, 0.15) 100%),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23991b1b"/><stop offset="1" stop-color="%23dc2626"/></linearGradient></defs><rect fill="url(%23rg)" width="800" height="280" rx="20"/><path fill="%23d4af37" d="M120 60h80v80h-80z" rx="12"/><text x="160" y="115" font-size="42" font-weight="900" fill="%23d4af37" text-anchor="middle">DMB</text><text x="400" y="140" font-size="48" font-weight="900" fill="white" text-anchor="middle">DEYAAR MAKKAH</text><text x="400" y="185" font-size="48" font-weight="900" fill="white" text-anchor="middle">BANGLADESH</text><text x="400" y="225" font-size="24" fill="rgba(255,255,255,0.9)" text-anchor="middle">Sylhet - Bangladesh</text><text x="400" y="920" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Thank You for</text><text x="400" y="975" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Your Payment!</text></svg>');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+      
+      .wrap, .card, .card .body {
+        position: relative;
+        z-index: 1;
+        background: transparent !important;
+      }
+      
+      .brandbar {
+        background: linear-gradient(135deg, #8b1c20 0%, #991b1b 25%, #b91c1c 50%, #991b1b 75%, #8b1c20 100%) !important;
+        border-bottom: 2px solid #d4af37 !important;
+      }
+      
+      .brandlogo {
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(255, 255, 255, 0.2)) !important;
+        border: 3px solid #d4af37 !important;
+        color: #d4af37 !important;
+      }
+      
+      .brandtxt .name, .brandtxt .sub {
+        color: #fff !important;
+      }
+      
+      .card {
+        border: 2px solid #333 !important;
+        box-shadow: none !important;
+      }
+      
+      .head {
+        border-bottom: 2px solid #999 !important;
+      }
+      
+      .brand {
+        color: #000 !important;
+      }
+      
+      .muted {
+        color: #444 !important;
+      }
+      
+      table {
+        border-collapse: collapse !important;
+      }
+      
+      th, td {
+        border: 1px solid #666 !important;
+        padding: 10px 12px !important;
+        color: #000 !important;
+        background: transparent !important;
+      }
+      
+      th {
+        background: rgba(245, 158, 11, 0.15) !important;
+        font-weight: 800 !important;
+      }
+      
+      #roomsTable thead th {
+        background: rgba(245, 158, 11, 0.2) !important;
+      }
+      
+      #roomsTable tfoot td,
+      #roomsTable tfoot th {
+        font-weight: 900 !important;
+        border-top: 3px solid #000 !important;
+        background: rgba(139, 92, 246, 0.1) !important;
+      }
+      
+      .grand-total-row td,
+      .grand-total-row th {
+        font-weight: 900 !important;
+        font-size: 16pt !important;
+        border-top: 4px solid #000 !important;
+        background: rgba(245, 158, 11, 0.15) !important;
+      }
+      
+      #grandTotal {
+        font-weight: 900 !important;
+        font-size: 18pt !important;
+        color: #000 !important;
+      }
+      
+      h3 {
+        color: #000 !important;
+      }
+      
+      .actions {
+        display: none !important;
+      }
+      
+      body {
+        font-size: 11pt !important;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- CENTERED TOP BANNER -->
-  <div class="brandbar" role="banner" aria-label='Company banner: "Top-10", Sylhet - Bangladesh'>
+  <div class="brandbar" role="banner">
     <div class="brandwrap">
-      <div class="brandlogo">T10</div>
+      <div class="brandlogo">DMB</div>
       <div class="brandtxt">
-        <div class="name">"Top-10"</div>
+        <div class="name">DEYAAR MAKKAH BANGLADESH</div>
         <div class="sub">Sylhet - Bangladesh</div>
       </div>
     </div>
   </div>
 
-  <!-- INVOICE CONTENT BELOW BANNER -->
   <div id="error" class="error" style="display:none"></div>
   <div class="wrap">
     <section class="card">
@@ -101,47 +352,56 @@
             <div class="brand" id="hotelBrand">Hotel</div>
             <div class="muted" id="hotelAddr">Address</div>
           </div>
-          <div class="muted">Issue Date: <span id="invDate"></span></div>
+          <div class="muted">Invoice Date: <span id="invDate"></span></div>
         </div>
 
-        <table>
+        <table class="info-table">
           <tbody>
             <tr><th style="width:220px">Guest Name</th><td id="vGuestName"></td></tr>
             <tr><th>Guest Address</th><td id="vGuestAddress"></td></tr>
-            <tr><th>Meal Type</th><td id="vMeals"></td></tr>
             <tr><th>Check-in</th><td id="vIn"></td></tr>
             <tr><th>Check-out</th><td id="vOut"></td></tr>
             <tr><th>Nights</th><td id="vNights"></td></tr>
           </tbody>
         </table>
 
-        <h3 style="margin:18px 0 6px">Rooms</h3>
+        <h3>Room & Meal Details</h3>
         <table id="roomsTable">
           <thead>
             <tr>
               <th>Qty</th>
               <th>View</th>
               <th>Type</th>
-              <th class="right">Rate (Tk)</th>
-              <th class="right">Line / Night (Tk)</th>
+              <th class="right">Room Rate (Tk)</th>
+              <th>Meal Type</th>
+              <th class="right">Meal Rate (Tk)</th>
+              <th class="right">Total/Night (Tk)</th>
             </tr>
           </thead>
           <tbody id="roomsBody"></tbody>
           <tfoot>
             <tr>
-              <th colspan="4" class="right">Per-night Subtotal</th>
+              <th colspan="6" class="right">Room Subtotal (Per Night)</th>
+              <td id="roomSubtotal" class="right"></td>
+            </tr>
+            <tr>
+              <th colspan="6" class="right">Meal Subtotal (Per Night)</th>
+              <td id="mealSubtotal" class="right"></td>
+            </tr>
+            <tr>
+              <th colspan="6" class="right">Per-Night Subtotal</th>
               <td id="perNightSubtotal" class="right"></td>
             </tr>
-            <tr style="font-weight:800">
-              <th colspan="4" class="right">Total (Nights × Subtotal)</th>
+            <tr class="grand-total-row">
+              <th colspan="6" class="right">GRAND TOTAL (Nights × Subtotal)</th>
               <td id="grandTotal" class="right"></td>
             </tr>
           </tfoot>
         </table>
 
         <div class="actions">
-          <button id="btnPrint" class="success" type="button">Print / Save PDF</button>
-          <a id="editLink" href="index.html" class="secondary" style="text-decoration:none;display:inline-block;padding:12px 16px;border-radius:12px;border:1px solid var(--border)">Edit Details</a>
+          <button id="btnPrint" class="success" type="button">🖨️ Print / Save PDF</button>
+          <a id="editLink" href="index.html" class="btn-link">✏️ Edit Details</a>
         </div>
       </div>
     </section>
@@ -158,7 +418,6 @@
       const hotelAddress = get('hotelAddress');
       const guestName = get('guestName');
       const guestAddress = get('guestAddress');
-      const meals = get('meals');
       const ci = get('checkin');
       const co = get('checkout');
       let rooms = [];
@@ -170,41 +429,52 @@
       const n = Math.max(0, Math.round((new Date(co)-new Date(ci))/(24*60*60*1000)));
       if(n <= 0) return showErr('Check-out must be after Check-in.');
 
-      // Header
       $('#hotelBrand').textContent = hotelName;
       $('#hotelAddr').textContent = hotelAddress;
       $('#vGuestName').textContent = guestName;
       $('#vGuestAddress').innerHTML = guestAddress.replace(/\n/g,'<br>');
-      $('#vMeals').textContent = meals || 'None';
       $('#vIn').textContent = toLocal(ci);
       $('#vOut').textContent = toLocal(co);
       $('#vNights').textContent = `${n} night${n>1?'s':''}`;
       $('#invDate').textContent = toLocal(new Date());
 
-      // Rooms + totals
       const body = $('#roomsBody');
       body.innerHTML = '';
-      let perNight = 0;
+      let roomTotal = 0;
+      let mealTotal = 0;
+      
       for(const r of rooms){
         const qty  = Number(r.qty || 0);
         const rate = Number(r.rate || 0);
-        const line = (Number.isFinite(qty)?qty:0) * (Number.isFinite(rate)?rate:0);
-        perNight += line;
+        const mealRate = Number(r.mealRate || 0);
+        const roomLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(rate)?rate:0);
+        const mealLine = (Number.isFinite(qty)?qty:0) * (Number.isFinite(mealRate)?mealRate:0);
+        const totalLine = roomLine + mealLine;
+        
+        roomTotal += roomLine;
+        mealTotal += mealLine;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${qty}</td>
+          <td class="center">${qty}</td>
           <td>${r.roomView || ''}</td>
           <td>${r.roomType || ''}</td>
           <td class="right">${(Number.isFinite(rate)?rate:0).toLocaleString()} Tk</td>
-          <td class="right">${line.toLocaleString()} Tk</td>
+          <td>${r.mealType || 'None'}</td>
+          <td class="right">${(Number.isFinite(mealRate)?mealRate:0).toLocaleString()} Tk</td>
+          <td class="right"><strong>${totalLine.toLocaleString()} Tk</strong></td>
         `;
         body.appendChild(tr);
       }
-      $('#perNightSubtotal').textContent = `${perNight.toLocaleString()} Tk`;
-      $('#grandTotal').textContent = `${(perNight * n).toLocaleString()} Tk`;
+      
+      const perNightTotal = roomTotal + mealTotal;
+      const grandTotal = perNightTotal * n;
+      
+      $('#roomSubtotal').textContent = `${roomTotal.toLocaleString()} Tk`;
+      $('#mealSubtotal').textContent = `${mealTotal.toLocaleString()} Tk`;
+      $('#perNightSubtotal').textContent = `${perNightTotal.toLocaleString()} Tk`;
+      $('#grandTotal').textContent = `${grandTotal.toLocaleString()} Tk`;
 
-      // Preserve params for editing
       $('#editLink').href = `index.html?${p.toString()}`;
     }
 

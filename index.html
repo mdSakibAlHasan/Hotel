@@ -5,98 +5,286 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Guest Booking → Generate Invoice</title>
   <style>
-    :root { --bg:#0b1220; --card:#121a2b; --muted:#a9b3c9; --text:#e6ebf5; --accent:#4f8cff; --border:#22304c; --shadow:0 10px 30px rgba(0,0,0,.35);}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% -10%, #1b2743 0%, #0b1220 40%),radial-gradient(1200px 800px at 110% 10%, #1a2036 0%, #0b1220 40%),var(--bg);color:var(--text)}
+    :root { 
+      --bg:#0a0e1a; 
+      --card:#1a1f35; 
+      --muted:#94a3b8; 
+      --text:#f1f5f9; 
+      --accent:#f59e0b;
+      --accent-hover:#d97706;
+      --secondary:#8b5cf6;
+      --border:#334155; 
+      --shadow:0 20px 50px rgba(0,0,0,.5);
+      --gold:#d4af37;
+      --crimson:#b91c1c;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      margin:0;
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e1b4b 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
 
-    /* --- Brand Banner --- */
+    /* Brand Banner */
     .brandbar{
-      position: sticky; top: 0; z-index: 50;
-      background: linear-gradient(90deg,#0ea5e9 0%,#4f46e5 50%,#9333ea 100%);
-      color:#fff; box-shadow: 0 6px 20px rgba(0,0,0,.25);
-      border-bottom: 1px solid rgba(255,255,255,.15);
+      position: sticky; 
+      top: 0; 
+      z-index: 50;
+      background: linear-gradient(135deg, #991b1b 0%, #b91c1c 25%, #dc2626 50%, #b91c1c 75%, #991b1b 100%);
+      color:#fff; 
+      box-shadow: 0 8px 32px rgba(185, 28, 28, 0.4);
+      border-bottom: 2px solid rgba(212, 175, 55, 0.3);
     }
-    .brandwrap{max-width:1000px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+    .brandwrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:16px 24px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
     .brandlogo{
-      width:38px;height:38px;border-radius:999px;
-      display:flex;align-items:center;justify-content:center;
-      border:1px solid rgba(255,255,255,.35);
-      background:rgba(255,255,255,.12); font-weight:800; letter-spacing:.5px;
+      width:60px;
+      height:60px;
+      border-radius:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:2px solid var(--gold);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 255, 255, 0.1));
+      font-weight:900; 
+      font-size:20px;
+      letter-spacing:1px;
+      color:var(--gold);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .brandtxt{line-height:1.05}
-    .brandtxt .name{font-weight:1000}
-    .brandtxt .sub{font-size:12px;opacity:.9}
+    .brandtxt{line-height:1.3}
+    .brandtxt .name{
+      font-weight:800;
+      font-size:22px;
+      letter-spacing:0.5px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .brandtxt .sub{
+      font-size:13px;
+      opacity:.9;
+      color:rgba(255,255,255,0.85);
+    }
 
-    header{max-width:780px;margin:24px auto 8px;padding:0 16px}
-    header h1{margin:10px 0 6px}
-    header p{margin:0;color:var(--muted)}
+    header{
+      max-width:1100px;
+      margin:32px auto 16px;
+      padding:0 24px;
+    }
+    header h1{
+      margin:0 0 8px;
+      font-size:36px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+    }
 
-    .container{max-width:780px;margin:16px auto 60px;padding:0 16px;display:grid;gap:16px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
-    .card .body{padding:20px}
-    .card h2{margin:0 0 12px;font-size:20px}
-    .row{display:grid;gap:12px}
+    .container{
+      max-width:1100px;
+      margin:24px auto 80px;
+      padding:0 24px;
+      display:grid;
+      gap:24px;
+    }
+    .card{
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(245, 158, 11, 0.03));
+      border:2px solid var(--border);
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .card .body{padding:32px}
+    .card h2{
+      margin:24px 0 16px;
+      font-size:22px;
+      color:var(--accent);
+      border-bottom:2px solid var(--border);
+      padding-bottom:8px;
+    }
+    .card h2:first-child{margin-top:0}
+    
+    .row{display:grid;gap:16px}
     @media (min-width:640px){.row.two{grid-template-columns:1fr 1fr}}
-    label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
-    input,textarea,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:#0f1627;color:var(--text);outline:none}
-    textarea{resize:vertical}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-    button{border:0;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:600;background:var(--accent);color:#fff;box-shadow:var(--shadow)}
-    button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
-    button:disabled{opacity:.6;cursor:not-allowed}
+    
+    label{
+      display:block;
+      font-size:14px;
+      font-weight:600;
+      color:var(--muted);
+      margin:0 0 8px;
+    }
+    input,textarea,select{
+      width:100%;
+      padding:14px 16px;
+      border-radius:12px;
+      border:2px solid var(--border);
+      background:rgba(15, 23, 42, 0.8);
+      color:var(--text);
+      outline:none;
+      transition: all 0.3s ease;
+      font-size:15px;
+    }
+    input:focus,textarea:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+    textarea{resize:vertical;min-height:70px}
+    
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+    button{
+      border:0;
+      padding:14px 24px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color:#fff;
+      box-shadow:0 4px 12px rgba(245, 158, 11, 0.3);
+      transition: all 0.3s ease;
+    }
+    button:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+    button.secondary{
+      background: linear-gradient(135deg, var(--secondary), #7c3aed);
+      box-shadow:0 4px 12px rgba(139, 92, 246, 0.3);
+    }
+    button.secondary:hover{
+      box-shadow:0 6px 20px rgba(139, 92, 246, 0.4);
+    }
+    button:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
 
-    /* Rooms row in one line */
-    .room-row{display:grid;gap:10px;align-items:end;margin-bottom:10px;grid-template-columns: 1fr 1fr 1fr 1fr auto}
-    .room-row .remove{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
-    .room-toolbar{display:flex;gap:10px;margin:8px 0 2px}
-    @media (max-width:700px){ .room-row{grid-template-columns:1fr 1fr;} }
+    /* Rooms row - expanded grid */
+    .room-row{
+      display:grid;
+      gap:12px;
+      align-items:end;
+      margin-bottom:16px;
+      padding:20px;
+      background:rgba(139, 92, 246, 0.05);
+      border:1px solid var(--border);
+      border-radius:12px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .room-row .field{
+      display:flex;
+      flex-direction:column;
+    }
+    .room-row .remove-wrap{
+      grid-column: 1 / -1;
+      display:flex;
+      justify-content:flex-end;
+      margin-top:8px;
+    }
+    .room-row .remove{
+      background:linear-gradient(135deg, #dc2626, #b91c1c);
+      border:0;
+      color:#fff;
+      padding:12px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow:0 4px 12px rgba(220, 38, 38, 0.3);
+      transition: all 0.3s ease;
+    }
+    .room-row .remove:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(220, 38, 38, 0.4);
+    }
+    .room-toolbar{
+      display:flex;
+      gap:12px;
+      margin:8px 0 16px;
+    }
+    @media (max-width:900px){ 
+      .room-row{grid-template-columns:1fr 1fr;} 
+    }
+    @media (max-width:600px){ 
+      .room-row{grid-template-columns:1fr;} 
+    }
 
-    /* Modern date preview */
-    .date-wrap{display:flex;gap:10px;align-items:center}
-    .pretty-date{min-width:160px;padding:10px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--muted)}
+    /* Date preview */
+    .date-wrap{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pretty-date{
+      min-width:180px;
+      padding:12px 16px;
+      border:2px dashed var(--border);
+      border-radius:10px;
+      color:var(--accent);
+      font-weight:600;
+      background:rgba(245, 158, 11, 0.05);
+    }
 
     @media print{
       body{background:#fff}
       .brandbar{background:#fff;color:#000;border-bottom:1px solid #ddd;box-shadow:none}
-      .brandlogo{border-color:#bbb;background:#f2f2f2;color:#000}
+      .brandlogo{border-color:#d4af37;background:#fff;color:#000}
     }
   </style>
 </head>
 <body>
-  <!-- Brand Banner -->
-  <div class="brandbar" role="banner" aria-label='Company banner: "Top-10", Sylhet - Bangladesh'>
+  <div class="brandbar" role="banner" aria-label='Company banner: "Deyaar Makkah Bangladesh"'>
     <div class="brandwrap">
-      <div class="brandlogo">T10</div>
+      <div class="brandlogo">DMB</div>
       <div class="brandtxt">
-        <div class="name">Top-10</div>
-        <div class="sub">Sylhet - Bangladesh</div>
+        <div class="name">DEYAAR MAKKAH BANGLADESH</div>
+        <div class="sub">Premium Hotel Booking Services</div>
       </div>
     </div>
   </div>
 
   <header>
     <h1>Guest Booking Form</h1>
-    <p class="muted">Enter details, add as many rooms as you need, and you'll be redirected to an invoice page with totals.</p>
+    <p>Enter guest details, add rooms with meal options, and generate a professional invoice instantly.</p>
   </header>
 
   <div class="container">
     <section class="card form">
       <div class="body">
-        <h2>Hotel & Guest</h2>
-        <div class="row">
+        <h2>Hotel & Guest Information</h2>
+        <div class="row two">
           <div>
             <label for="hotelName">Hotel Name *</label>
-            <input id="hotelName" type="text" placeholder="Aurora Hotel" required>
+            <input id="hotelName" type="text" placeholder="e.g., Aurora Grand Hotel" required>
           </div>
           <div>
             <label for="hotelAddress">Hotel Address *</label>
-            <textarea id="hotelAddress" rows="2" placeholder="Dhaka, Bangladesh" required></textarea>
+            <textarea id="hotelAddress" rows="2" placeholder="Street, City, Country" required></textarea>
           </div>
         </div>
-        <div class="row">
+        <div class="row two">
           <div>
             <label for="guestName">Guest Name *</label>
-            <input id="guestName" type="text" placeholder="e.g., Ayesha Rahman" required>
+            <input id="guestName" type="text" placeholder="e.g., Ahmed Rahman" required>
           </div>
           <div>
             <label for="guestAddress">Guest Address *</label>
@@ -104,15 +292,14 @@
           </div>
         </div>
 
-        <h2>Rooms</h2>
+        <h2>Room Details</h2>
         <div id="roomsContainer">
-          <!-- Default room (one line) -->
           <div class="room-row">
-            <div>
+            <div class="field">
               <label>Number of Rooms *</label>
               <input class="roomQty" type="number" min="1" step="1" value="1" required>
             </div>
-            <div>
+            <div class="field">
               <label>Room View *</label>
               <select class="roomView" required>
                 <option value="Non view">Non view</option>
@@ -120,7 +307,7 @@
                 <option value="Haram view">Haram view</option>
               </select>
             </div>
-            <div>
+            <div class="field">
               <label>Room Type *</label>
               <select class="roomType" required>
                 <option value="Single Bed">Single Bed</option>
@@ -132,41 +319,43 @@
                 <option value="Hexa">Hexa</option>
               </select>
             </div>
-            <div>
-              <label>Rate (Tk) *</label>
+            <div class="field">
+              <label>Room Rate (Tk) *</label>
               <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
             </div>
-            <button type="button" class="remove" aria-label="Remove room">Remove</button>
+            <div class="field">
+              <label>Meal Type</label>
+              <select class="mealType">
+                <option value="None">None</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Half Board">Half Board (Breakfast + Dinner)</option>
+                <option value="Full Board">Full Board (All Meals)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Meal Rate (Tk)</label>
+              <input class="mealRate" type="number" min="0" step="1" placeholder="0" value="0">
+            </div>
+            <div class="remove-wrap">
+              <button type="button" class="remove" aria-label="Remove room">Remove Room</button>
+            </div>
           </div>
         </div>
         <div class="room-toolbar">
-          <button id="addRoomBtn" type="button">Add Room</button>
+          <button id="addRoomBtn" type="button">+ Add Another Room</button>
         </div>
 
-        <h2>Meal Type</h2>
+        <h2>Stay Duration</h2>
         <div class="row two">
           <div>
-            <label for="meals">Meal Type</label>
-            <select id="meals" required>
-              <option value="None">None</option>
-              <option value="Breakfast">Breakfast</option>
-              <option value="Half Board (Breakfast + Dinner)">Half Board (Breakfast + Dinner)</option>
-              <option value="Full Board (Breakfast + Lunch + Dinner)">Full Board (Breakfast + Lunch + Dinner)</option>
-            </select>
-          </div>
-        </div>
-
-        <h2>Dates</h2>
-        <div class="row two">
-          <div>
-            <label for="checkIn">Check-in *</label>
+            <label for="checkIn">Check-in Date *</label>
             <div class="date-wrap">
               <input id="checkIn" type="date" required>
               <div id="prettyIn" class="pretty-date">—</div>
             </div>
           </div>
           <div>
-            <label for="checkOut">Check-out *</label>
+            <label for="checkOut">Check-out Date *</label>
             <div class="date-wrap">
               <input id="checkOut" type="date" required>
               <div id="prettyOut" class="pretty-date">—</div>
@@ -175,8 +364,8 @@
         </div>
 
         <div class="actions">
-          <button id="btnSubmit" type="button">Create Invoice</button>
-          <button id="btnReset" class="secondary" type="button">Reset</button>
+          <button id="btnSubmit" type="button">Generate Invoice</button>
+          <button id="btnReset" class="secondary" type="button">Reset Form</button>
         </div>
       </div>
     </section>
@@ -199,11 +388,11 @@
       const row = document.createElement('div');
       row.className = 'room-row';
       row.innerHTML = `
-        <div>
+        <div class="field">
           <label>Number of Rooms *</label>
           <input class="roomQty" type="number" min="1" step="1" value="1" required>
         </div>
-        <div>
+        <div class="field">
           <label>Room View *</label>
           <select class="roomView" required>
             <option value="Non view">Non view</option>
@@ -211,7 +400,7 @@
             <option value="Haram view">Haram view</option>
           </select>
         </div>
-        <div>
+        <div class="field">
           <label>Room Type *</label>
           <select class="roomType" required>
             <option value="Single Bed">Single Bed</option>
@@ -223,16 +412,33 @@
             <option value="Hexa">Hexa</option>
           </select>
         </div>
-        <div>
-          <label>Rate (Tk) *</label>
+        <div class="field">
+          <label>Room Rate (Tk) *</label>
           <input class="rate" type="number" min="0" step="1" placeholder="1500" required>
         </div>
-        <button type="button" class="remove" aria-label="Remove room">Remove</button>
+        <div class="field">
+          <label>Meal Type</label>
+          <select class="mealType">
+            <option value="None">None</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Half Board">Half Board (Breakfast + Dinner)</option>
+            <option value="Full Board">Full Board (All Meals)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Meal Rate (Tk)</label>
+          <input class="mealRate" type="number" min="0" step="1" placeholder="0" value="0">
+        </div>
+        <div class="remove-wrap">
+          <button type="button" class="remove" aria-label="Remove room">Remove Room</button>
+        </div>
       `;
       if (init.qty != null) row.querySelector('.roomQty').value = init.qty;
       if (init.roomView) row.querySelector('.roomView').value = init.roomView;
       if (init.roomType) row.querySelector('.roomType').value = init.roomType;
       if (init.rate != null) row.querySelector('.rate').value = init.rate;
+      if (init.mealType) row.querySelector('.mealType').value = init.mealType;
+      if (init.mealRate != null) row.querySelector('.mealRate').value = init.mealRate;
       bindRemove(row.querySelector('.remove'));
       return row;
     }
@@ -271,30 +477,31 @@
       const guestAddress = $('#guestAddress').value.trim();
       const checkin = $('#checkIn').value;
       const checkout = $('#checkOut').value;
-      const meals = $('#meals').value;
 
       const rooms = Array.from(roomsContainer.querySelectorAll('.room-row')).map(row => {
         const qty  = Number(row.querySelector('.roomQty')?.value ?? 0);
         const rate = Number(row.querySelector('.rate')?.value ?? 0);
+        const mealRate = Number(row.querySelector('.mealRate')?.value ?? 0);
         const roomView = row.querySelector('.roomView')?.value || '';
         const roomType = row.querySelector('.roomType')?.value || '';
-        return { qty, roomView, roomType, rate };
+        const mealType = row.querySelector('.mealType')?.value || 'None';
+        return { qty, roomView, roomType, rate, mealType, mealRate };
       });
 
-      if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout || !meals){
-        alert('Please fill all required Hotel, Guest, Meal Type, and Date fields.');
+      if(!hotelName || !hotelAddress || !guestName || !guestAddress || !checkin || !checkout){
+        alert('Please fill all required fields.');
         return;
       }
 
       for (const r of rooms){
         if(!Number.isInteger(r.qty) || r.qty < 1 || !isFinite(r.rate) || r.rate < 0 || !r.roomView || !r.roomType){
-          alert('Each room line needs: quantity ≥ 1, a view, a type, and a non-negative rate.');
+          alert('Each room needs: quantity ≥ 1, a view, a type, and a non-negative rate.');
           return;
         }
       }
 
       const params = new URLSearchParams({
-        hotelName, hotelAddress, guestName, guestAddress, checkin, checkout, meals,
+        hotelName, hotelAddress, guestName, guestAddress, checkin, checkout,
         rooms: JSON.stringify(rooms)
       });
       window.location.href = `invoice.html?${params.toString()}`;
