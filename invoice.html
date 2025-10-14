@@ -223,7 +223,7 @@
 
     @page { 
       size: A4; 
-      margin: 12mm; 
+      margin: 10mm; 
     }
     
     @media print {
@@ -236,6 +236,8 @@
       body {
         background: #fff !important;
         position: relative;
+        font-size: 10pt !important;
+        margin: 0 !important;
       }
       
       body::before {
@@ -250,75 +252,68 @@
         z-index: 0;
         background: 
           linear-gradient(135deg, rgba(139, 28, 32, 0.15) 0%, rgba(203, 45, 54, 0.15) 100%),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23991b1b"/><stop offset="1" stop-color="%23dc2626"/></linearGradient></defs><rect fill="url(%23rg)" width="800" height="280" rx="20"/><path fill="%23d4af37" d="M120 60h80v80h-80z" rx="12"/><text x="160" y="115" font-size="42" font-weight="900" fill="%23d4af37" text-anchor="middle">DMB</text><text x="400" y="140" font-size="48" font-weight="900" fill="white" text-anchor="middle">DEYAAR MAKKAH</text><text x="400" y="185" font-size="48" font-weight="900" fill="white" text-anchor="middle">BANGLADESH</text><text x="400" y="225" font-size="24" fill="rgba(255,255,255,0.9)" text-anchor="middle">Premium hotel booking</text><text x="400" y="420" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Thank You for</text><text x="400" y="475" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Your Payment!</text><text x="420" y="1000" font-size="48" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.9">DEYAAR MAKKAH BANGLADESH</text></svg>');
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23991b1b"/><stop offset="1" stop-color="%23dc2626"/></linearGradient></defs><rect fill="url(%23rg)" width="800" height="280" rx="20"/><path fill="%23d4af37" d="M120 60h80v80h-80z" rx="12"/><text x="160" y="115" font-size="42" font-weight="900" fill="%23d4af37" text-anchor="middle">DMB</text><text x="400" y="140" font-size="48" font-weight="900" fill="white" text-anchor="middle">DEYAAR MAKKAH</text><text x="400" y="185" font-size="48" font-weight="900" fill="white" text-anchor="middle">BANGLADESH</text><text x="400" y="225" font-size="24" fill="rgba(255,255,255,0.9)" text-anchor="middle">Premium hotel booking</text><text x="400" y="320" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Thank You for</text><text x="400" y="375" font-size="52" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.7">Your Payment!</text><text x="420" y="1000" font-size="48" font-weight="800" fill="%23991b1b" text-anchor="middle" opacity="0.9">DEYAAR MAKKAH BANGLADESH</text></svg>');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
       }
       
-      .wrap, .card, .card .body {
+      .wrap {
+        margin: 16px auto 0 !important;
+        padding: 0 5mm !important; /* THIS LINE ADDS LEFT/RIGHT MARGINS */
+      }
+      .card {
+        border: 2px solid #333 !important;
+        box-shadow: none !important;
+      }
+      .card .body {
         position: relative;
         z-index: 1;
         background: transparent !important;
+        padding: 24px !important;
       }
       
       .brandbar {
         background: linear-gradient(135deg, #8b1c20 0%, #991b1b 25%, #b91c1c 50%, #991b1b 75%, #8b1c20 100%) !important;
         border-bottom: 2px solid #d4af37 !important;
       }
-      
       .brandlogo {
         background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(255, 255, 255, 0.2)) !important;
         border: 3px solid #d4af37 !important;
         color: #d4af37 !important;
       }
-      
-     
-
-      /* === Compact, same-line header (logo + name) === */
-.brandwrap{
-  flex-direction: row !important;       /* was column on invoice */
-  align-items: center !important;
-  justify-content: flex-start !important;
-  text-align: left !important;
-  gap: 10px !important;                  /* small space between logo & text */
-}
-
-.brandtxt{
-  display: inline-flex !important;       /* keep "DEYAAR MAKKAH" and "BANGLADESH" in one line */
-  align-items: baseline !important;
-  gap: 8px !important;
-  white-space: nowrap !important;        /* prevent wrapping to next line */
-}
-
-.brandtxt .name,
-.brandtxt .sub{
-  margin: 0 !important;                  /* remove vertical spacing that causes line breaks */
-}
-
-/* Optional: a touch less vertical padding in the banner (keeps look the same) */
-.brandwrap{ padding-top: 12px !important; padding-bottom: 12px !important; }
-
-      
-      .card {
-        border: 2px solid #333 !important;
-        box-shadow: none !important;
+      .brandwrap{
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        gap: 10px !important;
+        padding: 10px 12px !important;
+      }
+      .brandtxt{
+        display: inline-flex !important;
+        align-items: baseline !important;
+        gap: 8px !important;
+        white-space: nowrap !important;
+      }
+      .brandtxt .name,
+      .brandtxt .sub{
+        margin: 0 !important;
       }
       
       .head {
         border-bottom: 2px solid #999 !important;
+        margin-bottom: 16px !important;
+        padding-bottom: 16px !important;
       }
       
-      .brand {
-        color: #000 !important;
-      }
-      
-      .muted {
-        color: #444 !important;
-      }
+      .brand { color: #000 !important; }
+      .muted { color: #444 !important; }
       
       h3 {
         color: #000 !important;
+        margin: 20px 0 10px !important;
+        font-size: 18px !important;
       }
       
       table {
@@ -328,7 +323,7 @@
       
       th, td {
         border: 1px solid #666 !important;
-        padding: 8px 12px !important;
+        padding: 6px 10px !important;
         color: #000 !important;
         background: transparent !important;
       }
@@ -341,22 +336,21 @@
       #roomsTable tfoot td,
       #roomsTable tfoot th {
         border-top: 2px solid #000 !important;
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
       }
       
       .grand-total-row td,
       .grand-total-row th {
         font-weight: 900 !important;
-        font-size: 16pt !important;
+        font-size: 14pt !important;
         border-top: 3px solid #000 !important;
         color: #000 !important;
+        padding: 10px 10px !important;
       }
       
       .actions {
         display: none !important;
-      }
-      
-      body {
-        font-size: 10pt !important;
       }
     }
   </style>
@@ -420,7 +414,7 @@
               <th colspan="6" class="right">Total Per Night</th>
               <td id="totalPerNight" class="right"></td>
             </tr>
-            <tr style="font-weight:800">
+            <tr class="grand-total-row" style="font-weight:800">
               <th colspan="6" class="right">Total (Nights × Total Per Night)</th>
               <td id="grandTotal" class="right"></td>
             </tr>
